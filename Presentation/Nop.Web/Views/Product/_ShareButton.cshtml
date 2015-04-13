@@ -1,0 +1,11 @@
+﻿@model ProductDetailsModel
+@using Nop.Web.Models.Catalog;
+
+@if (!String.IsNullOrWhiteSpace(Model.PageShareCode))
+{
+    @* @JSK - remove
+    <div class="product-share-button">
+        @Html.Raw(Model.PageShareCode)
+    </div>
+    *@
+}
