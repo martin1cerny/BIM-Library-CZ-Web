@@ -1,0 +1,43 @@
+﻿@model ProductDetailsModel
+@using Nop.Core.Domain.Media
+@using Nop.Core.Infrastructure;
+@using Nop.Web.Models.Catalog;
+@{
+    Html.AddScriptParts("~/Scripts/jquery.magnific-popup.js");
+    Html.AddCssFileParts("~/Content/magnific-popup/magnific-popup.css");
+
+    int productPerRow = EngineContext.Current.Resolve<MediaSettings>().ProductThumbPerRowOnProductDetailsPage;
+}
+
+    <div class="module">
+       @{
+           if (Model.Model3DModels.Count > 0)
+           {
+              @Html.Raw("<h1><pice/h1>")
+               var model3D = Model.Model3DModels[0];
+            @Html.Raw(
+        "<canvas id=\"viewer\" width=\"300\" height=\"250\"></canvas>" + "\n"
+        + "<script type=\"text/javascript\">" + "\n"
+            + "var viewer = new xViewer('viewer');" + "\n"
+            + "var check = xViewer.check();" + "\n"
+            + "if (check.noErrors)" + "\n"
+            + "{" + "\n"
+                         + "viewer.load('" + model3D.FullSizeImageUrl + "');" + "\n"
+            + "viewer.start();" + "\n"
+            + "} " + "\n"
+            + "else" + "\n"
+            + "{" + "\n"
+            + "var msg = document.getElementById('msg');" + "\n"
+            + "msg.innerHTML = '';" + "\n"
+            + "for(var i in check.errors)" + "\n"
+            + "{" + "\n"
+            + "var error = check.errors[i];" + "\n"
+            + "msg.innerHTML += \"<div style='color: red;'>\" + error + \"</div>\"; " + "\n"
+            + "}"
+            + "}"
+        + "</script>\n" + "\n")
+           }
+    }
+
+
+    </div>

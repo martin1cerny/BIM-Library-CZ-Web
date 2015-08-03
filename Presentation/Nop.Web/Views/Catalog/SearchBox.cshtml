@@ -3,11 +3,12 @@
 @{
     var searchTooltip = T("Search.SearchBox.Tooltip");
 }
-@using (Html.BeginRouteForm("ProductSearch", FormMethod.Get, new {onsubmit = "return check_small_search_form()"}))
+@using (Html.BeginRouteForm("ProductSearch", FormMethod.Get, new { onsubmit = "return check_small_search_form()" }))
 {
+    <input type="submit" class="button-1 search-box-button" value="@T("Search")" />
     <input type="text" class="search-box-text" id="small-searchterms" autocomplete="off" value="@searchTooltip" name="q" />
     @Html.Widget("searchbox_before_search_button")
-    <input type="submit" class="button-1 search-box-button" value="@T("Search")" />
+    <input type="submit" class="button-1 search-box-icon" value="" />
     <script type="text/javascript">
         $(document).ready(function() {
             $("#small-searchterms").focus(function() {

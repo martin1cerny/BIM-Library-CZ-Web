@@ -7,6 +7,7 @@ namespace Nop.Core.Domain.Discounts
     /// <summary>
     /// Represents a discount
     /// </summary>
+    [Serializable]
     public partial class Discount : BaseEntity
     {
         private ICollection<DiscountRequirement> _discountRequirements;

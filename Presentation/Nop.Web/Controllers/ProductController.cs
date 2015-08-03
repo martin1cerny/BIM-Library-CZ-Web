@@ -53,6 +53,7 @@ namespace Nop.Web.Controllers
         private readonly IStoreContext _storeContext;
         private readonly ITaxService _taxService;
         private readonly ICurrencyService _currencyService;
+        private readonly IModel3DService _model3DService;
         private readonly IPictureService _pictureService;
         private readonly ILocalizationService _localizationService;
         private readonly IPriceCalculationService _priceCalculationService;
@@ -95,6 +96,7 @@ namespace Nop.Web.Controllers
             IStoreContext storeContext,
             ITaxService taxService, 
             ICurrencyService currencyService,
+            IModel3DService model3DService,
             IPictureService pictureService, 
             ILocalizationService localizationService,
             IPriceCalculationService priceCalculationService,
@@ -134,6 +136,7 @@ namespace Nop.Web.Controllers
             this._taxService = taxService;
             this._currencyService = currencyService;
             this._pictureService = pictureService;
+            this._model3DService = model3DService;
             this._localizationService = localizationService;
             this._priceCalculationService = priceCalculationService;
             this._priceFormatter = priceFormatter;
@@ -176,7 +179,7 @@ namespace Nop.Web.Controllers
                 _storeContext, _categoryService, _productService, _specificationAttributeService,
                 _priceCalculationService, _priceFormatter, _permissionService,
                 _localizationService, _taxService, _currencyService,
-                _pictureService, _webHelper, _cacheManager,
+                _pictureService, _model3DService, _webHelper, _cacheManager,
                 _catalogSettings, _mediaSettings, products,
                 preparePriceModel, preparePictureModel,
                 productThumbPictureSize, prepareSpecificationAttributes,
@@ -408,6 +411,47 @@ namespace Nop.Web.Controllers
             model.PictureModels = cachedPictures.PictureModels;
 
             #endregion
+
+            #region Model3Ds
+
+            model.DefaultPictureZoomEnabled = _mediaSettings.DefaultPictureZoomEnabled;
+            //default picture
+            var defaultModel3DSize = isAssociatedProduct ?
+                _mediaSettings.AssociatedProductPictureSize :
+                _mediaSettings.ProductDetailsPictureSize;
+            //prepare picture models
+            var model3DsCacheKey = string.Format(ModelCacheEventConsumer.PRODUCT_DETAILS_MODEL3DS_MODEL_KEY, product.Id, defaultModel3DSize, isAssociatedProduct, _workContext.WorkingLanguage.Id, _webHelper.IsCurrentConnectionSecured(), _storeContext.CurrentStore.Id);
+            var cachedModel3Ds = _cacheManager.Get(model3DsCacheKey, () =>
+            {
+                var model3Ds = _model3DService.GetModel3DsByProductId(product.Id);
+
+                var defaultModel3DModel = new Model3DModel
+                {
+                    ImageUrl = _model3DService.GetModel3DUrl(model3Ds.FirstOrDefault(), defaultPictureSize, !isAssociatedProduct),
+                    FullSizeImageUrl = _model3DService.GetModel3DUrl(model3Ds.FirstOrDefault(), 0, !isAssociatedProduct),
+                    Title = string.Format(_localizationService.GetResource("Media.Product.ImageLinkTitleFormat.Details"), model.Name),
+                    AlternateText = string.Format(_localizationService.GetResource("Media.Product.ImageAlternateTextFormat.Details"), model.Name),
+                };
+                //all pictures
+                var model3DModels = new List<Model3DModel>();
+                foreach (var model3D in model3Ds)
+                {
+                    model3DModels.Add(new Model3DModel
+                    {
+                        ImageUrl = _model3DService.GetModel3DUrl(model3D, _mediaSettings.ProductThumbPictureSizeOnProductDetailsPage),
+                        FullSizeImageUrl = _model3DService.GetModel3DUrl(model3D),
+                        Title = string.Format(_localizationService.GetResource("Media.Product.ImageLinkTitleFormat.Details"), model.Name),
+                        AlternateText = string.Format(_localizationService.GetResource("Media.Product.ImageAlternateTextFormat.Details"), model.Name),
+                    });
+                }
+
+                return new { DefaultModel3DModel = defaultModel3DModel, Model3DModels = model3DModels };
+            });
+            model.DefaultModel3DModel = cachedModel3Ds.DefaultModel3DModel;
+            model.Model3DModels = cachedModel3Ds.Model3DModels;
+
+            #endregion
+
 
             #region Product price
             

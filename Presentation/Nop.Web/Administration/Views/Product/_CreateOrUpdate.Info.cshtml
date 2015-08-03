@@ -121,8 +121,6 @@
     }
 
     function toggleDownloadableProduct() {
-        if ($('#@Html.FieldIdFor(model => model.IsDownload)').is(':checked')) {
-
             $('#pnlDownloadFile').show();
             $('#pnlUnlimitedDownloads').show();
             if ($('#@Html.FieldIdFor(model => model.UnlimitedDownloads)').is(':checked')) {
@@ -147,17 +145,6 @@
             } else {
                 $('#pnlSampleDownloadFile').hide();
             }
-        } else {
-            $('#pnlDownloadFile').hide();
-            $('#pnlUnlimitedDownloads').hide();
-            $('#pnlMaxNumberOfDownloads').hide();
-            $('#pnlDownloadExpirationDays').hide();
-            $('#pnlDownloadActivationType').hide();
-            $('#pnlHasUserAgreement').hide();
-            $('#pnlUserAgreementText').hide();
-            $('#pnlHasSampleDownload').hide();
-            $('#pnlSampleDownloadFile').hide();
-        }
     }
 
     function toggleShipping() {
@@ -260,7 +247,7 @@
     //backorders are enabled
                 $('#pnlAllowBackInStockSubscriptions').hide();
     }
-    $('#pnlAllowAddingOnlyExistingAttributeCombinations').hide();
+    //$('#pnlAllowAddingOnlyExistingAttributeCombinations').hide();
     } else {
         $('#pnlUseMultipleWarehouses').hide();
         $('#pnlWarehouse').show();
@@ -472,6 +459,7 @@
             @Html.ValidationMessageFor(model => model.AdminComment)
         </td>
     </tr>
+    @*
     <tr @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.VendorId):
@@ -499,6 +487,7 @@
             @Html.ValidationMessageFor(model => model.DisplayOrder)
         </td>
     </tr>
+   *@
     <tr>
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.AllowCustomerReviews):
@@ -526,6 +515,7 @@
             @Html.ValidationMessageFor(model => model.Sku)
         </td>
     </tr>
+    @*
     <tr>
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.ManufacturerPartNumber):
@@ -535,6 +525,7 @@
             @Html.ValidationMessageFor(model => model.ManufacturerPartNumber)
         </td>
     </tr>
+    *@
     <tr>
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.Gtin):
@@ -545,6 +536,7 @@
         </td>
     </tr>
 </table>
+@*
 <table class="adminContent" id="group-prices">
     <tr class="adminSeparator">
         <td colspan="2">
@@ -678,6 +670,8 @@
         </td>
     </tr>
 </table>
+*@
+@*
 <table class="adminContent" id="group-required-other-products">
     <tr class="adminSeparator">
         <td colspan="2">
@@ -727,6 +721,8 @@
         </td>
     </tr>
 </table>
+*@
+@*
 <table class="adminContent" id="group-giftcard">
     <tr class="adminSeparator">
         <td colspan="2">
@@ -752,12 +748,14 @@
         </td>
     </tr>
 </table>
+*@
 <table class="adminContent" id="group-downloads">
     <tr class="adminSeparator">
         <td colspan="2">
             <hr />
         </td>
     </tr>
+    @*
     <tr>
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.IsDownload):
@@ -767,16 +765,20 @@
             @Html.ValidationMessageFor(model => model.IsDownload)
         </td>
     </tr>
+    *@
     <tr id="pnlDownloadFile">
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.DownloadId):
         </td>
         <td class="adminData">
+            @{
+                ViewData["nop.DownloadEditor.Id"] = Model.Id;
+            }
             @Html.EditorFor(model => model.DownloadId)
             @Html.ValidationMessageFor(model => model.DownloadId)
         </td>
     </tr>
-    <tr id="pnlUnlimitedDownloads">
+    @*<tr id="pnlUnlimitedDownloads">
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.UnlimitedDownloads):
         </td>
@@ -848,7 +850,9 @@
             @Html.ValidationMessageFor(model => model.SampleDownloadId)
         </td>
     </tr>
+    *@
 </table>
+@*
 <table class="adminContent" id="group-recurring">
     <tr class="adminSeparator">
         <td colspan="2">
@@ -892,6 +896,8 @@
         </td>
     </tr>
 </table>
+*@
+@*
 <table class="adminContent" id="group-rental">
     <tr class="adminSeparator">
         <td colspan="2">
@@ -926,6 +932,8 @@
         </td>
     </tr>
 </table>
+*@
+@*
 <table class="adminContent" id="group-shipping">
     <tr class="adminSeparator">
         <td colspan="2">
@@ -1013,7 +1021,10 @@
             @Html.ValidationMessageFor(model => model.DeliveryDateId)
         </td>
     </tr>
+   
 </table>
+*@
+@*
 <table class="adminContent" id="group-tax">
     <tr class="adminSeparator">
         <td colspan="2">
@@ -1048,7 +1059,8 @@
         </td>
     </tr>
 </table>
-<table class="adminContent" id="group-inventory">
+*@
+<table class="adminContent" id="group-inventory" style="visibility:hidden">
     <tr class="adminSeparator">
         <td colspan="2">
             <hr />
@@ -1237,6 +1249,7 @@
             @Html.ValidationMessageFor(model => model.AllowBackInStockSubscriptions)
         </td>
     </tr>
+
     <tr>
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.OrderMinimumQuantity):
@@ -1274,7 +1287,7 @@
         </td>
     </tr>
 </table>
-<table class="adminContent">
+<table class="adminContent" style="visibility:hidden">
     <tr class="adminSeparator">
         <td colspan="2">
             <hr />

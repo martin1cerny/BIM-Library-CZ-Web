@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentModel\WriteLockDisposable.cs" />
+    <Compile Include="Domain\Catalog\ProductModel3D.cs" />
     <Compile Include="Domain\Catalog\RentalPricePeriod.cs" />
     <Compile Include="Domain\Catalog\SpecificationAttributeType.cs" />
     <Compile Include="Domain\Catalog\AttributeValueType.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Domain\Customers\CustomerAttribute.cs" />
     <Compile Include="Domain\Customers\CustomerAttributeValue.cs" />
     <Compile Include="Domain\Customers\CustomerLoginResults.cs" />
+    <Compile Include="Domain\Media\Model3D.cs" />
     <Compile Include="Domain\Orders\OrderByCountryReportLine.cs" />
     <Compile Include="Domain\Seo\WwwRequirement.cs" />
     <Compile Include="Domain\Shipping\Events.cs" />
@@ -347,7 +349,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

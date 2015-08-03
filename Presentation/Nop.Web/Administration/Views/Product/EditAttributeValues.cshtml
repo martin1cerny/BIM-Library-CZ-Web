@@ -1,5 +1,33 @@
 ﻿@model ProductModel.ProductAttributeValueListModel
 
+
+<script>
+    function openWindow(url, id) {
+        //alert(id);
+        var form = document.createElement('FORM');
+        form.method = 'POST';
+        form.action = url;
+        
+        form.target = 'newWindow'; // Specify the name of the window(second parameter to window.open method.)
+        var input = document.createElement("INPUT");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", "folder");
+        input.setAttribute("value", @Model.ProductId +"/"+id);
+
+        form.appendChild(input);
+        document.body.appendChild(form);
+        window.open("", "newWindow", "location=yes,width=400,height=400");
+        form.submit();
+    }
+
+    function popupCenter(url, title, w, h) {
+        var left = (screen.width / 2) - (w / 2);
+        var top = (screen.height / 2) - (h / 2);
+        var param = { 'uid' : '1234'};
+        return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left + ', param='+param);
+    }
+</script>
+
 @{    
     //page title
     ViewBag.Title = string.Format(T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.EditAttributeDetails").Text, Model.ProductAttributeName, Model.ProductName);
@@ -70,39 +98,23 @@
                         },
                         scrollable: false,
                         columns: [
-                            {
+                            @*{
                                 field: "AttributeValueTypeName",
                                 title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.AttributeValueType")",
                                 width: 150
-                            }, {
+                            },*@ {
                                 field: "Name",
                                 title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Name")",
                                 width: 200
                             }, {
-                                field: "AssociatedProductName",
-                                title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.AssociatedProduct")",
-                                width: 200
-                            }, {
-                                field: "PriceAdjustmentStr",
-                                title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.PriceAdjustment")",
-                                width: 150
-                            }, {
-                                field: "WeightAdjustmentStr",
-                                title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.WeightAdjustment")",
-                                width: 150
-                            }, {
-                                field: "IsPreSelected",
-                                title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.IsPreSelected")",
-                                width: 100,
-                                headerAttributes: { style: "text-align:center" },
-                                attributes: { style: "text-align:center" },
-                                template: '<img src="@Url.Content("~/Administration/Content/images/")active-#=IsPreSelected#.gif" />'
-                            }, {
-                                field: "PictureThumbnailUrl",
-                                title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Picture")",
-                                template: '<img src="#=PictureThumbnailUrl#" />',
-                                width: 200
-                            },{
+                                field: "Upload",
+                                title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Files")",
+                                width: 150,
+                                template: "<a onclick=\"openWindow('http://www.narodni-bim-knihovna.cz/files/', #=Id#);\" href=\"javascript:void(0);\">UPLOAD FILES</a>"
+                                //SEM!!!  
+
+                            },
+                            {
                                 field: "DisplayOrder",
                                 title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.DisplayOrder")",
                                 width: 100

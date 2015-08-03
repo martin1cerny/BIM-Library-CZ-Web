@@ -11,9 +11,10 @@
                 <li @Html.RenderSelectedTabIndex(0, 0)>
                     @T("Admin.Catalog.Products.ProductAttributes.Attributes")
                 </li>
-                <li>
+                @*<li>
                     @T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations")
                 </li>
+                *@
             </ul>
             <div>
                 @TabAttributes()
@@ -117,7 +118,7 @@ else
                     previousNext: false,
                     info: false
                 },
-                toolbar: ["create"],
+                @*toolbar: ["create"],*@
                 edit: function(e) {
                     if (e.model.isNew()) {
                         //little hack here
@@ -148,13 +149,13 @@ else
                         field: "TextPrompt",
                         title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Fields.TextPrompt")",
                         width: 150
-                    }, {
+                    }, @*{
                         field: "IsRequired",
                         title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Fields.IsRequired")",
                         width: 150,
                         headerAttributes: { style: "text-align:center" },
                         attributes: { style: "text-align:center" },
-                        template: '<img src="@Url.Content("~/Administration/Content/images/")active-#=IsRequired#.gif" />'
+                        template: '<img src="@Url.Content("~/Administration/Content/images/")active-#=IsRequired#.gif" />'  
                     },
                     {
                         field: "AttributeControlTypeId",
@@ -169,29 +170,31 @@ else
                         width: 150,
                         //integer format
                         format: "{0:0}"
-                    }, {
+                    
+                    },*@ 
+                    {
                         field: "ViewEditValuesUrl",
                         title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values")",
                         width: 150,
                         template: "# if(ViewEditValuesUrl !== null) {# <a href='#=ViewEditValuesUrl#\'>#:ViewEditValuesText#</a> #}  #"
                     },
-                    {
+                    @*{
                         field: "ValidationRulesAllowed",
                         title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.ValidationRules")",
                         width: 150,
                         template: "# if(ValidationRulesAllowed) {# <a href='javascript:OpenWindow(\"@Url.Content("~/Admin/Product/ProductAttributeValidationRulesPopup/")#=Id#?btnId=btnRefreshProductAttributes&formId=product-form\", 800, 300, true);'>@T("Admin.Catalog.Products.ProductAttributes.Attributes.ValidationRules.ViewLink")</a> #}  #"
-                    },
+                    },*@
                     {
                         command: [
-                            {
+                            @*{
                                 name: "edit",
                                 text: "@T("Admin.Common.Edit")"
                             }, {
                                 name: "destroy",
                                 text: "@T("Admin.Common.Delete")"
-                            }
+                            }*@
                         ],
-                        width: 200
+                        width: 50
                     }
                 ]
             });

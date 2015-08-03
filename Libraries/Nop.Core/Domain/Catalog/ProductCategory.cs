@@ -1,8 +1,10 @@
+using System;
 namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
     /// Represents a product category mapping
     /// </summary>
+    [Serializable]
     public partial class ProductCategory : BaseEntity
     {
         /// <summary>
@@ -34,6 +36,20 @@ namespace Nop.Core.Domain.Catalog
         /// Gets the product
         /// </summary>
         public virtual Product Product { get; set; }
+
+        public static ProductCategory clone(ProductCategory cloneObject)
+        {
+            ProductCategory newObject = new ProductCategory();
+            newObject.Category = Category.clone(cloneObject.Category);
+            newObject.CategoryId = cloneObject.CategoryId;
+            newObject.DisplayOrder = cloneObject.DisplayOrder;
+            newObject.Id = cloneObject.Id;
+            newObject.IsFeaturedProduct = cloneObject.IsFeaturedProduct;
+            //newObject.Product
+            newObject.ProductId = cloneObject.ProductId;
+            return newObject;
+        }
+
 
     }
 

@@ -7,6 +7,7 @@ namespace Nop.Core.Domain.Catalog
     /// <summary>
     /// Represents a product review
     /// </summary>
+    [Serializable]
     public partial class ProductReview : BaseEntity
     {
         private ICollection<ProductReviewHelpfulness> _productReviewHelpfulnessEntries;

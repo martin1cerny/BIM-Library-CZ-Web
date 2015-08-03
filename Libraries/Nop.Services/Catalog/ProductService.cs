@@ -50,6 +50,7 @@ namespace Nop.Services.Catalog
         private readonly IRepository<AclRecord> _aclRepository;
         private readonly IRepository<StoreMapping> _storeMappingRepository;
         private readonly IRepository<ProductPicture> _productPictureRepository;
+        private readonly IRepository<ProductModel3D> _productModel3DRepository;
         private readonly IRepository<ProductSpecificationAttribute> _productSpecificationAttributeRepository;
         private readonly IRepository<ProductReview> _productReviewRepository;
         private readonly IRepository<ProductWarehouseInventory> _productWarehouseInventoryRepository;
@@ -68,6 +69,8 @@ namespace Nop.Services.Catalog
         private readonly IEventPublisher _eventPublisher;
         private readonly IAclService _aclService;
         private readonly IStoreMappingService _storeMappingService;
+
+        private static ProductService productService;
 
         #endregion
 
@@ -108,6 +111,7 @@ namespace Nop.Services.Catalog
             IRepository<CrossSellProduct> crossSellProductRepository,
             IRepository<TierPrice> tierPriceRepository,
             IRepository<ProductPicture> productPictureRepository,
+            IRepository<ProductModel3D> productModel3DRepository,
             IRepository<LocalizedProperty> localizedPropertyRepository,
             IRepository<AclRecord> aclRepository,
             IRepository<StoreMapping> storeMappingRepository,
@@ -135,6 +139,7 @@ namespace Nop.Services.Catalog
             this._crossSellProductRepository = crossSellProductRepository;
             this._tierPriceRepository = tierPriceRepository;
             this._productPictureRepository = productPictureRepository;
+            this._productModel3DRepository = productModel3DRepository;
             this._localizedPropertyRepository = localizedPropertyRepository;
             this._aclRepository = aclRepository;
             this._storeMappingRepository = storeMappingRepository;
@@ -155,6 +160,7 @@ namespace Nop.Services.Catalog
             this._eventPublisher = eventPublisher;
             this._aclService = aclService;
             this._storeMappingService = storeMappingService;
+            productService = this;
         }
 
         #endregion
@@ -1767,6 +1773,84 @@ namespace Nop.Services.Catalog
         }
 
         #endregion
+
+        #region Product model3Ds
+
+        /// <summary>
+        /// Deletes a product model
+        /// </summary>
+        /// <param name="productModel">Product model</param>
+        public virtual void DeleteProductModel3D(ProductModel3D productModel3D)
+        {
+            if (productModel3D == null)
+                throw new ArgumentNullException("productModel");
+
+            _productModel3DRepository.Delete(productModel3D);
+
+            //event notification
+            _eventPublisher.EntityDeleted(productModel3D);
+        }
+
+        /// <summary>
+        /// Gets a product models by product identifier
+        /// </summary>
+        /// <param name="productId">The product identifier</param>
+        /// <returns>Product models</returns>
+        public virtual IList<ProductModel3D> GetProductModel3DsByProductId(int productId)
+        {
+            var query = from pp in _productModel3DRepository.Table
+                        where pp.ProductId == productId
+                        orderby pp.DisplayOrder
+                        select pp;
+            var productModels = query.ToList();
+            return productModels;
+        }
+
+        /// <summary>
+        /// Gets a product model
+        /// </summary>
+        /// <param name="productModelId">Product model identifier</param>
+        /// <returns>Product model</returns>
+        public virtual ProductModel3D GetProductModel3DById(int productModel3DId)
+        {
+            if (productModel3DId == 0)
+                return null;
+
+            return _productModel3DRepository.GetById(productModel3DId);
+        }
+
+        /// <summary>
+        /// Inserts a product model
+        /// </summary>
+        /// <param name="productPicture">Product model</param>
+        public virtual void InsertProductModel3D(ProductModel3D productModel3D)
+        {
+            if (productModel3D == null)
+                throw new ArgumentNullException("productModel3D");
+
+            _productModel3DRepository.Insert(productModel3D);
+
+            //event notification
+            _eventPublisher.EntityInserted(productModel3D);
+        }
+
+        /// <summary>
+        /// Updates a product model
+        /// </summary>
+        /// <param name="productModel">Product picture</param>
+        public virtual void UpdateProductModel3D(ProductModel3D productModel3D)
+        {
+            if (productModel3D == null)
+                throw new ArgumentNullException("productModel3D");
+
+            _productModel3DRepository.Update(productModel3D);
+
+            //event notification
+            _eventPublisher.EntityUpdated(productModel3D);
+        }
+
+        #endregion
+
 
         #region Product reviews
         

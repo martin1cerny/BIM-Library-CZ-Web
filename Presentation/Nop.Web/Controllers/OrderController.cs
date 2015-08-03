@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using System.Xml;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
@@ -24,6 +25,7 @@ using Nop.Web.Extensions;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Security;
 using Nop.Web.Models.Order;
+using Nop.Core.Domain.Media;
 
 namespace Nop.Web.Controllers
 {
@@ -49,7 +51,7 @@ namespace Nop.Web.Controllers
         private readonly IAddressAttributeFormatter _addressAttributeFormatter;
         private readonly IStoreContext _storeContext;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
-
+        private readonly IProductService _productService;
         private readonly OrderSettings _orderSettings;
         private readonly TaxSettings _taxSettings;
         private readonly CatalogSettings _catalogSettings;
@@ -74,6 +76,7 @@ namespace Nop.Web.Controllers
             IShippingService shippingService,
             ICountryService countryService, 
             IProductAttributeParser productAttributeParser,
+            IProductService productService,
             IWebHelper webHelper,
             IDownloadService downloadService,
             IAddressAttributeFormatter addressAttributeFormatter,
@@ -98,7 +101,9 @@ namespace Nop.Web.Controllers
             this._pdfService = pdfService;
             this._shippingService = shippingService;
             this._countryService = countryService;
+            this._productService = productService;
             this._productAttributeParser = productAttributeParser;
+      
             this._webHelper = webHelper;
             this._downloadService = downloadService;
             this._addressAttributeFormatter = addressAttributeFormatter;
@@ -370,6 +375,20 @@ namespace Nop.Web.Controllers
             var orderItems = _orderService.GetAllOrderItems(order.Id, null, null, null, null, null, null);
             foreach (var orderItem in orderItems)
             {
+                //FIXME: ine riesenie, ked bude cas !!! 
+                int filesForAtributeIdInt = -1;
+                if (orderItem.AttributesXml.Length > 0)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(orderItem.AttributesXml);
+                    XmlElement root = doc.DocumentElement;
+                    try
+                    {
+                        filesForAtributeIdInt = Int32.Parse(root.InnerText);
+                    }
+                    catch (FormatException e)
+                    {}
+                }
                 var orderItemModel = new OrderDetailsModel.OrderItemModel
                 {
                     Id = orderItem.Id,
@@ -380,6 +399,7 @@ namespace Nop.Web.Controllers
                     ProductSeName = orderItem.Product.GetSeName(),
                     Quantity = orderItem.Quantity,
                     AttributeInfo = orderItem.AttributeDescription,
+                    FilesForAtributeId = filesForAtributeIdInt
                 };
                 //rental info
                 if (orderItem.Product.IsRental)
@@ -412,8 +432,13 @@ namespace Nop.Web.Controllers
                 }
 
                 //downloadable products
-                if (_downloadService.IsDownloadAllowed(orderItem))
-                    orderItemModel.DownloadId = orderItem.Product.DownloadId;
+                   orderItemModel.DownloadId = orderItem.Product.DownloadId;
+                   Download download  = _downloadService.GetDownloadById(orderItem.Product.DownloadId);
+                   if (download != null)
+                   {
+                       orderItemModel.DownloadUrl = download.DownloadUrl;
+                   }
+
                 if (_downloadService.IsLicenseDownloadAllowed(orderItem))
                     orderItemModel.LicenseId = orderItem.LicenseDownloadId.HasValue ? orderItem.LicenseDownloadId.Value : 0;
             }

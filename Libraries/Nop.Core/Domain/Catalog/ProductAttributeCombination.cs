@@ -1,8 +1,10 @@
+using System;
 namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
     /// Represents a product attribute combination
     /// </summary>
+    [Serializable]
     public partial class ProductAttributeCombination : BaseEntity
     {
         /// <summary>

@@ -1,8 +1,10 @@
+using System;
 namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
     /// Represents a product manufacturer mapping
     /// </summary>
+    [Serializable]
     public partial class ProductManufacturer : BaseEntity
     {
         /// <summary>

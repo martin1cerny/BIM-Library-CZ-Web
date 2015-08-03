@@ -14,6 +14,7 @@ namespace Nop.Core.Domain.Catalog
     public partial class Category : BaseEntity, ILocalizedEntity, ISlugSupported, IAclSupported, IStoreMappingSupported
     {
         private ICollection<Discount> _appliedDiscounts;
+        public ICollection<Category> Children;
 
         /// <summary>
         /// Gets or sets the name
@@ -136,6 +137,45 @@ namespace Nop.Core.Domain.Catalog
         {
             get { return _appliedDiscounts ?? (_appliedDiscounts = new List<Discount>()); }
             protected set { _appliedDiscounts = value; }
+        }
+
+        public void setChildren(ICollection<Category> newChildren){
+            this.Children = newChildren;
+        }
+
+        public ICollection<Category> getChildren()
+        {
+            return Children;
+        }
+
+        public static Category clone(Category cloneObject)
+        {
+            Category newObject = new Category();
+            newObject.AllowCustomersToSelectPageSize = cloneObject.AllowCustomersToSelectPageSize;
+            //newObject.AppliedDiscounts
+            newObject.CategoryTemplateId = cloneObject.CategoryTemplateId;
+            newObject.CreatedOnUtc = cloneObject.CreatedOnUtc;
+            newObject.Deleted = cloneObject.Deleted;
+            newObject.Description = cloneObject.Description;
+            newObject.DisplayOrder = cloneObject.DisplayOrder;
+            newObject.HasDiscountsApplied = cloneObject.HasDiscountsApplied;
+            newObject.Id = cloneObject.Id;
+            newObject.IncludeInTopMenu = cloneObject.IncludeInTopMenu;
+            newObject.LimitedToStores = cloneObject.LimitedToStores;
+            newObject.MetaDescription = cloneObject.MetaDescription;
+            newObject.MetaKeywords = cloneObject.MetaKeywords;
+            newObject.MetaTitle = cloneObject.MetaTitle;
+            newObject.Name = cloneObject.Name;
+            newObject.PageSize = cloneObject.PageSize;
+            newObject.PageSizeOptions = cloneObject.PageSizeOptions;
+            newObject.ParentCategoryId = cloneObject.ParentCategoryId;
+            newObject.PictureId = cloneObject.PictureId;
+            newObject.PriceRanges = cloneObject.PriceRanges;
+            newObject.Published = cloneObject.Published;
+            newObject.ShowOnHomePage = cloneObject.ShowOnHomePage;
+            newObject.SubjectToAcl = cloneObject.SubjectToAcl;
+            newObject.UpdatedOnUtc = cloneObject.UpdatedOnUtc;
+            return newObject;
         }
     }
 }

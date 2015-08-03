@@ -5,17 +5,20 @@ using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Security;
 using Nop.Core.Domain.Seo;
 using Nop.Core.Domain.Stores;
+using System.Collections.ObjectModel;
 
 namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
     /// Represents a product
     /// </summary>
+    [Serializable]
     public partial class Product : BaseEntity, ILocalizedEntity, ISlugSupported, IAclSupported, IStoreMappingSupported
     {
         private ICollection<ProductCategory> _productCategories;
         private ICollection<ProductManufacturer> _productManufacturers;
         private ICollection<ProductPicture> _productPictures;
+        private ICollection<ProductModel3D> _productModel3Ds;
         private ICollection<ProductReview> _productReviews;
         private ICollection<ProductSpecificationAttribute> _productSpecificationAttributes;
         private ICollection<ProductTag> _productTags;
@@ -579,7 +582,7 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<ProductCategory> ProductCategories
         {
             get { return _productCategories ?? (_productCategories = new List<ProductCategory>()); }
-            protected set { _productCategories = value; }
+            set { _productCategories = value; }
         }
 
         /// <summary>
@@ -588,7 +591,7 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<ProductManufacturer> ProductManufacturers
         {
             get { return _productManufacturers ?? (_productManufacturers = new List<ProductManufacturer>()); }
-            protected set { _productManufacturers = value; }
+            set { _productManufacturers = value; }
         }
 
         /// <summary>
@@ -597,8 +600,18 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<ProductPicture> ProductPictures
         {
             get { return _productPictures ?? (_productPictures = new List<ProductPicture>()); }
-            protected set { _productPictures = value; }
+            set { _productPictures = value; }
         }
+
+        /// <summary>
+        /// Gets or sets the collection of ProductModel3D
+        /// </summary>
+        public virtual ICollection<ProductModel3D> ProductModel3Ds
+        {
+            get { return _productModel3Ds ?? (_productModel3Ds = new List<ProductModel3D>()); }
+            set { _productModel3Ds = value; }
+        }
+
 
         /// <summary>
         /// Gets or sets the collection of product reviews
@@ -606,7 +619,7 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<ProductReview> ProductReviews
         {
             get { return _productReviews ?? (_productReviews = new List<ProductReview>()); }
-            protected set { _productReviews = value; }
+            set { _productReviews = value; }
         }
 
         /// <summary>
@@ -615,7 +628,7 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<ProductSpecificationAttribute> ProductSpecificationAttributes
         {
             get { return _productSpecificationAttributes ?? (_productSpecificationAttributes = new List<ProductSpecificationAttribute>()); }
-            protected set { _productSpecificationAttributes = value; }
+            set { _productSpecificationAttributes = value; }
         }
 
         /// <summary>
@@ -624,7 +637,7 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<ProductTag> ProductTags
         {
             get { return _productTags ?? (_productTags = new List<ProductTag>()); }
-            protected set { _productTags = value; }
+            set { _productTags = value; }
         }
 
         /// <summary>
@@ -633,7 +646,7 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<ProductAttributeMapping> ProductAttributeMappings
         {
             get { return _productAttributeMappings ?? (_productAttributeMappings = new List<ProductAttributeMapping>()); }
-            protected set { _productAttributeMappings = value; }
+            set { _productAttributeMappings = value; }
         }
 
         /// <summary>
@@ -642,7 +655,7 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<ProductAttributeCombination> ProductAttributeCombinations
         {
             get { return _productAttributeCombinations ?? (_productAttributeCombinations = new List<ProductAttributeCombination>()); }
-            protected set { _productAttributeCombinations = value; }
+            set { _productAttributeCombinations = value; }
         }
 
         /// <summary>
@@ -651,7 +664,7 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<TierPrice> TierPrices
         {
             get { return _tierPrices ?? (_tierPrices = new List<TierPrice>()); }
-            protected set { _tierPrices = value; }
+            set { _tierPrices = value; }
         }
 
         /// <summary>
@@ -660,7 +673,7 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<Discount> AppliedDiscounts
         {
             get { return _appliedDiscounts ?? (_appliedDiscounts = new List<Discount>()); }
-            protected set { _appliedDiscounts = value; }
+            set { _appliedDiscounts = value; }
         }
         
         /// <summary>
@@ -669,7 +682,145 @@ namespace Nop.Core.Domain.Catalog
         public virtual ICollection<ProductWarehouseInventory> ProductWarehouseInventory
         {
             get { return _productWarehouseInventory ?? (_productWarehouseInventory = new List<ProductWarehouseInventory>()); }
-            protected set { _productWarehouseInventory = value; }
+            set { _productWarehouseInventory = value; }
         }
+
+        public static Product clone(Product cloneProduct){
+            Product newProduct = new Product();
+            newProduct.AdditionalShippingCharge = cloneProduct.AdditionalShippingCharge;
+            newProduct.AdminComment = cloneProduct.AdminComment;
+            newProduct.AllowAddingOnlyExistingAttributeCombinations = cloneProduct.AllowAddingOnlyExistingAttributeCombinations;
+            newProduct.AllowBackInStockSubscriptions = cloneProduct.AllowBackInStockSubscriptions;
+            newProduct.AllowCustomerReviews = cloneProduct.AllowCustomerReviews;
+            newProduct.AllowedQuantities = cloneProduct.AllowedQuantities;
+            //newProduct.AppliedDiscounts
+            newProduct.ApprovedRatingSum = cloneProduct.ApprovedRatingSum;
+            newProduct.ApprovedTotalReviews = cloneProduct.ApprovedTotalReviews;
+            newProduct.AutomaticallyAddRequiredProducts = cloneProduct.AutomaticallyAddRequiredProducts;
+            newProduct.AvailableEndDateTimeUtc = cloneProduct.AvailableEndDateTimeUtc;
+            newProduct.AvailableForPreOrder = cloneProduct.AvailableForPreOrder;
+            newProduct.AvailableStartDateTimeUtc = cloneProduct.AvailableStartDateTimeUtc;
+            //newProduct.BackorderMode
+            newProduct.BackorderModeId = cloneProduct.BackorderModeId;
+            newProduct.CallForPrice = cloneProduct.CallForPrice;
+            newProduct.CreatedOnUtc = cloneProduct.CreatedOnUtc;
+            newProduct.CustomerEntersPrice = cloneProduct.CustomerEntersPrice;
+            newProduct.Deleted = cloneProduct.Deleted;
+            newProduct.DeliveryDateId = cloneProduct.DeliveryDateId;
+            newProduct.DisableBuyButton = cloneProduct.DisableBuyButton;
+            newProduct.DisableWishlistButton = cloneProduct.DisableWishlistButton;
+            newProduct.DisplayOrder = cloneProduct.DisplayOrder;
+            newProduct.DisplayStockAvailability = cloneProduct.DisplayStockAvailability;
+            newProduct.DisplayStockQuantity = cloneProduct.DisplayStockQuantity;
+            //newProduct.DownloadActivationType
+            newProduct.DownloadActivationTypeId = cloneProduct.DownloadActivationTypeId;
+            newProduct.DownloadExpirationDays = cloneProduct.DownloadExpirationDays;
+            newProduct.DownloadId = cloneProduct.DownloadId;
+            newProduct.FullDescription = cloneProduct.FullDescription;
+            //newProduct.GiftCardType
+            newProduct.GiftCardTypeId = cloneProduct.GiftCardTypeId;
+            newProduct.Gtin = cloneProduct.Gtin;
+            newProduct.HasDiscountsApplied = cloneProduct.HasDiscountsApplied;
+            newProduct.HasSampleDownload = cloneProduct.HasSampleDownload;
+            newProduct.HasTierPrices = cloneProduct.HasTierPrices;
+            newProduct.HasUserAgreement = cloneProduct.HasUserAgreement;
+            newProduct.Height = cloneProduct.Height;
+            newProduct.Id = cloneProduct.Id;
+            newProduct.IsDownload = cloneProduct.IsDownload;
+            newProduct.IsFreeShipping = cloneProduct.IsFreeShipping;
+            newProduct.IsGiftCard = cloneProduct.IsGiftCard;
+            newProduct.IsRecurring = cloneProduct.IsRecurring;
+            newProduct.IsRental = cloneProduct.IsRental;
+            newProduct.IsShipEnabled = cloneProduct.IsShipEnabled;
+            newProduct.IsTaxExempt = cloneProduct.IsTaxExempt;
+            newProduct.IsTelecommunicationsOrBroadcastingOrElectronicServices = cloneProduct.IsTelecommunicationsOrBroadcastingOrElectronicServices;
+            newProduct.Length = cloneProduct.Length;
+            newProduct.LimitedToStores = cloneProduct.LimitedToStores;
+            //newProduct.LowStockActivity
+            newProduct.LowStockActivityId = cloneProduct.LowStockActivityId;
+            //newProduct.ManageInventoryMethod
+            newProduct.ManageInventoryMethodId = cloneProduct.ManageInventoryMethodId;
+            newProduct.ManufacturerPartNumber = cloneProduct.ManufacturerPartNumber;
+            newProduct.MaximumCustomerEnteredPrice = cloneProduct.MaximumCustomerEnteredPrice;
+            newProduct.MaxNumberOfDownloads = cloneProduct.MaxNumberOfDownloads;
+            newProduct.MetaDescription = cloneProduct.MetaDescription;
+            newProduct.MetaKeywords = cloneProduct.MetaKeywords;
+            newProduct.MetaTitle = cloneProduct.MetaTitle;
+            newProduct.MinimumCustomerEnteredPrice = cloneProduct.MinimumCustomerEnteredPrice;
+            newProduct.MinStockQuantity = cloneProduct.MinStockQuantity;
+            newProduct.Name = cloneProduct.Name;
+            newProduct.NotApprovedRatingSum = cloneProduct.NotApprovedRatingSum;
+            newProduct.NotApprovedTotalReviews = cloneProduct.NotApprovedTotalReviews;
+            newProduct.NotifyAdminForQuantityBelow = cloneProduct.NotifyAdminForQuantityBelow;
+            newProduct.OldPrice = cloneProduct.OldPrice;
+            newProduct.OrderMaximumQuantity = cloneProduct.OrderMaximumQuantity;
+            newProduct.OrderMinimumQuantity = cloneProduct.OrderMinimumQuantity;
+            newProduct.ParentGroupedProductId = cloneProduct.ParentGroupedProductId;
+            newProduct.PreOrderAvailabilityStartDateTimeUtc = cloneProduct.PreOrderAvailabilityStartDateTimeUtc;
+            newProduct.Price = cloneProduct.Price;
+            //newProduct.ProductAttributeCombinations
+            //newProduct.ProductAttributeMappings
+            newProduct.ProductCategories = new Collection<ProductCategory>();
+            foreach (ProductCategory element in cloneProduct.ProductCategories)
+            {
+                newProduct.ProductCategories.Add(ProductCategory.clone(element));
+            }
+            
+            newProduct.ProductCost = cloneProduct.ProductCost;
+            //newProduct.ProductManufacturers
+            newProduct.ProductModel3Ds = new Collection<ProductModel3D>();
+            foreach (ProductModel3D element in cloneProduct.ProductModel3Ds)
+            {
+                newProduct.ProductModel3Ds.Add(ProductModel3D.clone(element));
+            }
+            newProduct.ProductPictures = new Collection<ProductPicture>();
+            foreach (ProductPicture element in cloneProduct.ProductPictures)
+            {
+                newProduct.ProductPictures.Add(ProductPicture.clone(element));
+            }
+
+            //newProduct.ProductReviews
+            //newProduct.ProductSpecificationAttributes
+            //newProduct.ProductTags
+            newProduct.ProductTemplateId = cloneProduct.ProductTemplateId;
+            //newProduct.ProductType
+            newProduct.ProductTypeId = cloneProduct.ProductTypeId;
+            //newProduct.ProductWarehouseInventory
+            newProduct.Published = cloneProduct.Published;
+            newProduct.RecurringCycleLength = cloneProduct.RecurringCycleLength;
+            //newProduct.RecurringCyclePeriod = cloneProduct.RecurringCyclePeriod;
+            newProduct.RecurringCyclePeriodId = cloneProduct.RecurringCyclePeriodId;
+            newProduct.RecurringTotalCycles = cloneProduct.RecurringTotalCycles;
+            newProduct.RentalPriceLength = cloneProduct.RentalPriceLength;
+            //newProduct.RentalPricePeriod = cloneProduct.RentalPricePeriod;
+            newProduct.RentalPricePeriodId = cloneProduct.RentalPricePeriodId;
+            newProduct.RequiredProductIds = cloneProduct.RequiredProductIds;
+            newProduct.RequireOtherProducts = cloneProduct.RequireOtherProducts;
+            newProduct.SampleDownloadId = cloneProduct.SampleDownloadId;
+            newProduct.ShipSeparately = cloneProduct.ShipSeparately;
+            newProduct.ShortDescription = cloneProduct.ShortDescription;
+            newProduct.ShowOnHomePage = cloneProduct.ShowOnHomePage;
+            newProduct.Sku = cloneProduct.Sku;
+            newProduct.SpecialPrice = cloneProduct.SpecialPrice;
+            newProduct.SpecialPriceEndDateTimeUtc = cloneProduct.SpecialPriceEndDateTimeUtc;
+            newProduct.SpecialPriceStartDateTimeUtc = cloneProduct.SpecialPriceStartDateTimeUtc;
+            newProduct.StockQuantity = cloneProduct.StockQuantity;
+            newProduct.SubjectToAcl = cloneProduct.SubjectToAcl;
+            newProduct.TaxCategoryId = cloneProduct.TaxCategoryId;
+            //newProduct.TierPrices
+            newProduct.UnlimitedDownloads = cloneProduct.UnlimitedDownloads;
+            newProduct.UpdatedOnUtc = cloneProduct.UpdatedOnUtc;
+            newProduct.UseMultipleWarehouses = cloneProduct.UseMultipleWarehouses;
+            newProduct.UserAgreementText = cloneProduct.UserAgreementText;
+            newProduct.VendorId = cloneProduct.VendorId;
+            newProduct.VisibleIndividually = cloneProduct.VisibleIndividually;
+            newProduct.WarehouseId = cloneProduct.WarehouseId;
+            newProduct.Weight = cloneProduct.Weight;
+            newProduct.Width = cloneProduct.Width;
+       
+            newProduct.ShortDescription = cloneProduct.ShortDescription;
+            return newProduct;
+        }
+
     }
 }

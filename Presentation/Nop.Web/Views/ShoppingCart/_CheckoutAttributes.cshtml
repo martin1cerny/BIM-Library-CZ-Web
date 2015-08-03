@@ -2,6 +2,7 @@
 @using Nop.Core.Domain.Catalog;
 @if (Model.Count > 0)
 {
+   @* 
     <div class="checkout-attributes">
         <dl>
             @foreach (var attribute in Model)
@@ -89,8 +90,10 @@
                             
                         <input id="@(controlId)" name="@(controlId)" type="hidden" />
                         @*fine uploader container*@
+                        @*
                         <div id="@(controlId)uploader"></div>
                         @*fine uploader template (keep it synchronized to \Content\fineuploader\templates\default.html)*@
+                        @*
                         <script type="text/template" id="@(controlId)-qq-template">
                             <div class="qq-uploader-selector qq-uploader">
                                 <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
@@ -156,6 +159,7 @@
                                                 <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" />
                                                 @*uncomment below to display attribute value name*@
                                                 @*<span class="name">@attributeValue.Name @(!String.IsNullOrEmpty(attributeValue.PriceAdjustment) ? " [" + attributeValue.PriceAdjustment + "]" : null)</span>*@
+                                            @*
                                             </label>
                                         </li>
                                     }
@@ -174,5 +178,5 @@
                 </dd>
             }
         </dl>
-    </div>
+    </div>*@
 }

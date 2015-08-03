@@ -79,6 +79,7 @@ namespace Nop.Web.Extensions
             ITaxService taxService,
             ICurrencyService currencyService,
             IPictureService pictureService,
+            IModel3DService model3DService,
             IWebHelper webHelper,
             ICacheManager cacheManager,
             CatalogSettings catalogSettings,
@@ -335,6 +336,33 @@ namespace Nop.Web.Extensions
 
                     #endregion
                 }
+
+                //model3D
+                if (preparePictureModel)
+                {
+                    #region Prepare product model3D
+
+                    //If a size has been set in the view, we use it in priority
+                    int pictureSize = productThumbPictureSize.HasValue ? productThumbPictureSize.Value : mediaSettings.ProductThumbPictureSize;
+                    //prepare picture model
+                    var defaultProductModel3DCacheKey = string.Format(ModelCacheEventConsumer.PRODUCT_DEFAULTMODEL3D_MODEL_KEY, product.Id, true, workContext.WorkingLanguage.Id, webHelper.IsCurrentConnectionSecured(), storeContext.CurrentStore.Id);
+                    model.DefaultModel3DModel = cacheManager.Get(defaultProductModel3DCacheKey, () =>
+                    {
+                        var model3D = model3DService.GetModel3DsByProductId(product.Id, 1).FirstOrDefault();
+                        var model3DModel = new Model3DModel
+                        {
+                            ImageUrl = model3DService.GetModel3DUrl(model3D, pictureSize),
+                            FullSizeImageUrl = model3DService.GetModel3DUrl(model3D),
+                            Title = string.Format(localizationService.GetResource("Media.Product.ImageLinkTitleFormat"), model.Name),
+                            AlternateText = string.Format(localizationService.GetResource("Media.Product.ImageAlternateTextFormat"), model.Name)
+                        };
+                        return model3DModel;
+                    });
+
+                    #endregion
+                }
+
+
 
                 //specs
                 if (prepareSpecificationAttributes)

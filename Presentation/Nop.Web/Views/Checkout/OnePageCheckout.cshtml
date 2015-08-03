@@ -1,8 +1,9 @@
 ﻿@model OnePageCheckoutModel
 @using Nop.Web.Models.Checkout;
 @using Nop.Core.Infrastructure;
+@using System.Web.UI.HtmlControls;
 @{
-    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+    Layout = "~/Views/Shared/_Start_ColumnsOne.cshtml";
 
     Html.AddScriptParts("~/Scripts/public.accordion.js");
     Html.AddScriptParts("~/Scripts/public.onepagecheckout.js");
@@ -11,6 +12,12 @@
 
     //title
     Html.AddTitleParts(T("PageTitle.Checkout").Text);
+       
+    //HtmlMeta meta = new HtmlMeta();
+   //HtmlHead head = (HtmlHead)Page.Header;
+    //meta.HttpEquiv = "refresh";
+    //meta.Content = "3; url=www.dsl.sk";
+    //head.Controls.Add(meta); 
 }
 @{
     //step numbers
@@ -34,14 +41,17 @@
         paymentInfoStepNumber--;
         confirmOrderStepNumber--;
     }
+
+    
+    
 }
 <div class="page checkout-page">
-    <div class="page-title">
+    @*<div class="page-title">
         <h1>@T("Checkout")</h1>
-    </div>
+    </div>*@
     <div class="page-body checkout-data">
         <ol class="opc" id="checkout-steps">
-            <li id="opc-billing" class="tab-section allow">
+            @*<li id="opc-billing" class="tab-section allow">
                 <div class="step-title">
                     <span class="number">@billingAddressStepNumber</span>
                     <h2>@T("Checkout.BillingAddress")</h2>
@@ -50,7 +60,7 @@
                     <form id="co-billing-form" action="">
                     <div id="checkout-billing-load">
                         @Html.Action("OpcBillingForm", "Checkout")
-                        @*billing address content will be loaded here*@
+                        billing address content will be loaded here
                     </div>
                     </form>
                     <script type="text/javascript">
@@ -64,19 +74,19 @@
                         <span class="please-wait" id="billing-please-wait" style="display: none;">@T("Common.LoadingNextStep")</span>
                     </div>
                 </div>
-            </li>
+            </li>*@
             @if (Model.ShippingRequired)
             {
-                <li id="opc-shipping" class="tab-section">
+                <li id="opc-shipping" class="tab-section" style="display: none;">
                     <div class="step-title">
                         <span class="number">@shippingAddressStepNumber</span>
                         <h2>@T("Checkout.ShippingAddress")</h2>
                     </div>
                     <div id="checkout-step-shipping" class="step a-item" style="display: none;">
                         <form action="" id="co-shipping-form">
-                        <div id="checkout-shipping-load">
-                            @*shipping address content will be loaded here*@
-                        </div>
+                            <div id="checkout-shipping-load">
+                                @*shipping address content will be loaded here*@
+                            </div>
                         </form>
                         <script type="text/javascript">
                             Shipping.init('#co-shipping-form', '@(storeLocation)checkout/OpcSaveShipping/');
@@ -96,7 +106,7 @@
                         </div>
                     </div>
                 </li>
-                <li id="opc-shipping_method" class="tab-section">
+               @* <li id="opc-shipping_method" class="tab-section">
                     <div class="step-title">
                         <span class="number">@shippingMethodStepNumber</span>
                         <h2>@T("Checkout.ShippingMethod")</h2>
@@ -104,7 +114,7 @@
                     <div id="checkout-step-shipping-method" class="step a-item" style="display: none;">
                         <form id="co-shipping-method-form" action="">
                         <div id="checkout-shipping-method-load">
-                            @*shipping methods content will be loaded here*@
+                            shipping methods content will be loaded here
                         </div>
                         <script type="text/javascript">
                             ShippingMethod.init('#co-shipping-method-form', '@(storeLocation)checkout/OpcSaveShippingMethod/');
@@ -117,9 +127,10 @@
                         </div>
                         </form>
                     </div>
-                </li>
+                </li>*@
             }
-            <li id="opc-payment_method" class="tab-section">
+            
+            @*<li id="opc-payment_method" class="tab-section">
                 <div class="step-title">
                     <span class="number">@paymentMethodStepNumber</span>
                     <h2>@T("Checkout.PaymentMethod")</h2>
@@ -127,7 +138,7 @@
                 <div id="checkout-step-payment-method" class="step a-item" style="display: none;">
                     <form action="" id="co-payment-method-form">
                     <div id="checkout-payment-method-load">
-                        @*payment methods content will be loaded here*@ Payment is not required
+                        payment methods content will be loaded here Payment is not required
                     </div>
                     </form>
                     <script type="text/javascript">
@@ -141,6 +152,8 @@
                     </div>
                 </div>
             </li>
+            *@
+            @*
             <li id="opc-payment_info" class="tab-section">
                 <div class="step-title">
                     <span class="number">@paymentInfoStepNumber</span>
@@ -149,7 +162,7 @@
                 <div id="checkout-step-payment-info" class="step a-item" style="display: none;">
                     <form action="" id="co-payment-info-form">
                     <div id="checkout-payment-info-load">
-                        @*payment info content will be loaded here*@ Payment is not required
+                        payment info content will be loaded here Payment is not required
                     </div>
                     </form>
                     <script type="text/javascript">
@@ -163,10 +176,11 @@
                     </div>
                 </div>
             </li>
-            <li id="opc-confirm_order" class="tab-section">
+            *@
+            <li id="opc-confirm_order" class="tab-section" style="display: none;">
                 <div class="step-title">
                     <span class="number">@confirmOrderStepNumber</span>
-                    <h2>@T("Checkout.ConfirmOrder")</h2>
+                    @* <h2>@T("Checkout.ConfirmOrder")</h2> *@
                 </div>
                 <div id="checkout-step-confirm-order" class="step a-item" style="display: none;">
                     <div id="checkout-confirm-order-load">
@@ -185,14 +199,23 @@
             </li>
         </ol>
     </div>
-    <script type="text/javascript">
-        Accordion.init('checkout-steps', '.step-title', true);
-        Accordion.openSection('#opc-billing');
-        Checkout.init('@(storeLocation)cart/');
-        if (Billing.disableBillingAddressCheckoutStep)
-        {
-            Accordion.hideSection('#opc-billing');
-            Billing.save();
-        }
-    </script>
+    
 </div>
+<script type="text/javascript">
+
+    //window.location = "/";
+
+
+    $(".confirm-order-next-step-button").trigger('click');
+    //Accordion.init('checkout-steps', '.step-title', true);
+    //Accordion.openSection('#opc-billing');
+    //Checkout.init('@(storeLocation)cart/');
+    //if (Billing.disableBillingAddressCheckoutStep)
+    //{
+    //   Accordion.hideSection('#opc-billing');
+    //    Billing.save();
+    //}
+
+    //window.location = "/";
+</script>
+

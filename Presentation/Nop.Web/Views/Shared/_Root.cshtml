@@ -1,6 +1,23 @@
-﻿@{
+﻿@using Nop.Core;
+@using Nop.Core.Infrastructure;
+@using Nop.Services.Orders;
+
+@{
     Layout = "~/Views/Shared/_Root.Head.cshtml";
+
+    var customer = EngineContext.Current.Resolve<IWorkContext>().CurrentCustomer;
+
+    int shoppingCartItems = 0;
+    if (customer.HasShoppingCartItems)
+    {
+        shoppingCartItems = customer.ShoppingCartItems
+            .Where(sci => sci.ShoppingCartType == Nop.Core.Domain.Orders.ShoppingCartType.ShoppingCart)
+            .LimitPerStore(EngineContext.Current.Resolve<IStoreContext>().CurrentStore.Id)
+            .ToList()
+            .GetTotalProducts();
+    }
 }
+
 @Html.Widget("body_start_html_tag_after")
 @Html.Partial("_Notifications")
 @Html.Action("AdminHeaderLinks", "Common")
@@ -11,9 +28,7 @@
             AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart');
         </script>
         @Html.Partial("Header")
-        <div class="search-box2">
-            @Html.Action("SearchBoxInCategory", "Catalog")
-        </div>
+  
         @*@JSK -> remove <div class="header-menu">
             @Html.Action("TopMenu", "Catalog")
         </div>*@
@@ -24,13 +39,41 @@
             </div>
         </div>
         <div class="master-wrapper-main">
+            <div class="search-box2">
+                @Html.Action("SearchBoxInProduct", "Catalog")
+
+            </div>
             @RenderBody()
         </div>
         @Html.Widget("content_after")
     </div>
-    <div class="footer_picture"> </div>
-    <img src="@Url.Content("~/Themes/DefaultClean/Content/images/footer.png")" alt="" /> 
-        @* @JSK @REMOVE @Html.Action("Footer", "Common") *@
+    <div class="cart_picture">
+        <span class="cart-button-text">
+            <button type="submit" class="cart-button" name="add" onclick="setLocation('cart')">
+                @T("Shoppingcart.Shoppingcart") <br>
+                @T("Shoppingcart.Mini.items", shoppingCartItems)
+            </button>
+        </span>
     </div>
+    </div>
+    <div class="footer_picture" id="root_footer">
+        <div class="nopCommeranceLink"> <a href="http://www.nopCommerce.com">powered by nopCommerce</a> </div>
+    @* @JSK @REMOVE @Html.Action("Footer", "Common") *@
+</div>
 @Html.Action("EuCookieLaw", "Common")
 @Html.Widget("body_end_html_tag_before")
+
+
+<!--
+<script>
+    $(function () {
+        var bht = $('body').height();
+        var wht = $(window).height();
+        if (wht >= bht) {
+            $('#root_footer').css("position", "absolute");
+            $('#root_footer').css("bottom", "0px");
+        }
+
+    });
+</script> -->
+

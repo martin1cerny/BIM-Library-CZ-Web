@@ -43,7 +43,7 @@
                 <col width="1" />
                 <col width="1" />
             </colgroup>
-            <thead>
+            @*<thead>
                 <tr class="cart-header-row">
                     @if (Model.IsEditable)
                     {
@@ -75,6 +75,7 @@
                     </th>
                 </tr>
             </thead>
+            *@
             <tbody>
                 @foreach (var item in Model.Items)
                 {
@@ -139,10 +140,12 @@
                                 </div>
                             }
                         </td>
+                        @*
                         <td class="unit-price nobr">
                             <span class="td-title">@T("ShoppingCart.UnitPrice"):</span>
                             <span class="product-unit-price">@item.UnitPrice</span>
                         </td>
+                        
                         <td class="qty nobr">
                             <span class="td-title">@T("ShoppingCart.Quantity"):</span>
                             @if (Model.IsEditable)
@@ -177,6 +180,7 @@
                                 </div>
                             }
                         </td>
+                        *@
                     </tr>
                 }
             </tbody>
@@ -210,6 +214,7 @@
                 </div>
                 }
             }
+            @*
             <div class="cart-collaterals">
                 @if (Model.IsEditable)
                 {
@@ -221,6 +226,7 @@
                     @Html.Partial("EstimateShipping", Model.EstimateShipping)
                 }
             </div>
+            *@
             <div class="totals">
                 @Html.Action("OrderTotals", "ShoppingCart", new { isEditable = Model.IsEditable })
                 @if (Model.IsEditable)

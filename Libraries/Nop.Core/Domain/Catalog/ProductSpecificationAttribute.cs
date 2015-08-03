@@ -1,8 +1,10 @@
+using System;
 namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
     /// Represents a product specification attribute
     /// </summary>
+    [Serializable]
     public partial class ProductSpecificationAttribute : BaseEntity
     {
         /// <summary>

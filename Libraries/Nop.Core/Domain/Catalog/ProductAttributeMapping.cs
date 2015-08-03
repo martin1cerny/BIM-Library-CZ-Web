@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using Nop.Core.Domain.Localization;
+using System;
 
 namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
     /// Represents a product attribute mapping
     /// </summary>
+    [Serializable]
     public partial class ProductAttributeMapping : BaseEntity, ILocalizedEntity
     {
         private ICollection<ProductAttributeValue> _productAttributeValues;

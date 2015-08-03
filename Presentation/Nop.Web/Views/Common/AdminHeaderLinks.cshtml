@@ -2,6 +2,7 @@
 @using Nop.Web.Models.Common;
 @if (Model.IsCustomerImpersonated || Model.DisplayAdminLink)
 {
+    @*
     <div class="admin-header-links">
         @if (Model.IsCustomerImpersonated)
         {
@@ -14,4 +15,5 @@
             <a href="@Url.Content("~/admin")" class="administration">@T("Account.Administration")</a>
         }
     </div>
+    *@
 }

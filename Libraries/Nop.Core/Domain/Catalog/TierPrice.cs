@@ -1,10 +1,12 @@
 using Nop.Core.Domain.Customers;
+using System;
 
 namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
     /// Represents a tier price
     /// </summary>
+    [Serializable]
     public partial class TierPrice : BaseEntity
     {
         /// <summary>

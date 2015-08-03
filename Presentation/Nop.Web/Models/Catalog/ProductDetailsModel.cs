@@ -13,7 +13,9 @@ namespace Nop.Web.Models.Catalog
         public ProductDetailsModel()
         {
             DefaultPictureModel = new PictureModel();
+            DefaultModel3DModel = new Model3DModel();
             PictureModels = new List<PictureModel>();
+            Model3DModels = new List<Model3DModel>();
             GiftCard = new GiftCardModel();
             ProductPrice = new ProductPriceModel();
             AddToCart = new AddToCartModel();
@@ -31,7 +33,9 @@ namespace Nop.Web.Models.Catalog
         //picture(s)
         public bool DefaultPictureZoomEnabled { get; set; }
         public PictureModel DefaultPictureModel { get; set; }
+        public Model3DModel DefaultModel3DModel { get; set; }
         public IList<PictureModel> PictureModels { get; set; }
+        public IList<Model3DModel> Model3DModels { get; set; }
 
         public string Name { get; set; }
         public string ShortDescription { get; set; }
@@ -271,6 +275,10 @@ namespace Nop.Web.Models.Catalog
 
             public int PictureId { get; set; }
             public string PictureUrl { get; set; }
+
+            public int Model3DId { get; set; }
+            public string Model3DUrl { get; set; }
+
             public string FullSizePictureUrl { get; set; }
         }
 

@@ -2,7 +2,7 @@
 
 namespace Nop.Web.Models.Catalog
 {
-    public partial class SearchBoxInCategoryModel : BaseNopModel
+    public partial class SearchBoxInProductModel : BaseNopModel
     {
         public bool AutoCompleteEnabled { get; set; }
         public bool ShowProductImagesInSearchAutoComplete { get; set; }

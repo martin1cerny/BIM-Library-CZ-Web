@@ -55,6 +55,7 @@ namespace Nop.Admin.Controllers
         private readonly ILocalizedEntityService _localizedEntityService;
         private readonly ISpecificationAttributeService _specificationAttributeService;
         private readonly IPictureService _pictureService;
+        private readonly IModel3DService _model3DService;
         private readonly ITaxCategoryService _taxCategoryService;
         private readonly IProductTagService _productTagService;
         private readonly ICopyProductService _copyProductService;
@@ -99,6 +100,7 @@ namespace Nop.Admin.Controllers
             ILocalizationService localizationService, 
             ILocalizedEntityService localizedEntityService,
             ISpecificationAttributeService specificationAttributeService, 
+            IModel3DService model3DService,
             IPictureService pictureService,
             ITaxCategoryService taxCategoryService, 
             IProductTagService productTagService,
@@ -169,6 +171,7 @@ namespace Nop.Admin.Controllers
             this._productAttributeFormatter = productAttributeFormatter;
             this._productAttributeParser = productAttributeParser;
             this._downloadService = downloadService;
+            this._model3DService = model3DService;
         }
 
         #endregion 
@@ -645,8 +648,6 @@ namespace Nop.Admin.Controllers
                 model.RentalPriceLength = 1;
                 model.StockQuantity = 10000;
                 model.NotifyAdminForQuantityBelow = 1;
-                model.OrderMinimumQuantity = 1;
-                model.OrderMaximumQuantity = 10000;
 
                 model.UnlimitedDownloads = true;
                 model.IsShipEnabled = true;
@@ -654,6 +655,8 @@ namespace Nop.Admin.Controllers
                 model.Published = true;
                 model.VisibleIndividually = true;
             }
+            model.OrderMinimumQuantity = 1;
+            model.OrderMaximumQuantity = 1;
         }
 
         [NonAction]
@@ -766,6 +769,7 @@ namespace Nop.Admin.Controllers
 
             var model = new ProductListModel();
             model.DisplayProductPictures = _adminAreaSettings.DisplayProductPictures;
+
             //a vendor should have access only to his products
             model.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
 
@@ -933,6 +937,18 @@ namespace Nop.Admin.Controllers
                 _customerActivityService.InsertActivity("AddNewProduct", _localizationService.GetResource("ActivityLog.AddNewProduct"), product.Name);
                 
                 SuccessNotification(_localizationService.GetResource("Admin.Catalog.Products.Added"));
+
+                var productAttributeMapping = new ProductAttributeMapping
+                {
+                    ProductId = product.Id,
+                    ProductAttributeId = 1,
+                    TextPrompt = "",
+                    IsRequired = true,
+                    AttributeControlTypeId = 1,
+                    //DisplayOrder = model.DisplayOrder
+                };
+                _productAttributeService.InsertProductAttributeMapping(productAttributeMapping);
+
                 return continueEditing ? RedirectToAction("Edit", new { id = product.Id }) : RedirectToAction("List");
             }
 
@@ -940,6 +956,13 @@ namespace Nop.Admin.Controllers
             PrepareProductModel(model, null, false, true);
             PrepareAclModel(model, null, true);
             PrepareStoresMappingModel(model, null, true);
+
+            //var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(1);
+            //var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(1);
+           
+
+
+           
             return View(model);
         }
 
@@ -2242,6 +2265,130 @@ namespace Nop.Admin.Controllers
             _productService.DeleteProductPicture(productPicture);
             var picture = _pictureService.GetPictureById(pictureId);
             _pictureService.DeletePicture(picture);
+
+            return new NullJsonResult();
+        }
+
+        #endregion
+
+        #region Product models
+
+        public ActionResult ProductModel3DAdd(int model3DId, int displayOrder, int productId)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            if (model3DId == 0)
+                throw new ArgumentException();
+
+            var product = _productService.GetProductById(productId);
+            if (product == null)
+                throw new ArgumentException("No product found with the specified id");
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null && product.VendorId != _workContext.CurrentVendor.Id)
+                return RedirectToAction("List");
+
+            _productService.InsertProductModel3D(new ProductModel3D
+            {
+                Model3DId = model3DId,
+                ProductId = productId,
+                DisplayOrder = displayOrder,
+            });
+
+            _model3DService.SetSeoFilename(model3DId, _model3DService.GetModel3DSeName(product.Name));
+
+            return Json(new { Result = true }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult ProductModel3DList(DataSourceRequest command, int productId)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null)
+            {
+                var product = _productService.GetProductById(productId);
+                if (product != null && product.VendorId != _workContext.CurrentVendor.Id)
+                {
+                    return Content("This is not your product");
+                }
+            }
+
+            var productModel3Ds = _productService.GetProductModel3DsByProductId(productId);
+            var productModel3DsModel = productModel3Ds
+                .Select(x => new ProductModel.ProductModel3DModel
+                {
+                    Id = x.Id,
+                    ProductId = x.ProductId,
+                    Model3DId = x.Model3DId,
+                    Model3DUrl = _model3DService.GetModel3DUrl(x.Model3DId),
+                    DisplayOrder = x.DisplayOrder
+                })
+                .ToList();
+
+            var gridModel = new DataSourceResult
+            {
+                Data = productModel3DsModel,
+                Total = productModel3DsModel.Count
+            };
+
+            return Json(gridModel);
+        }
+
+        [HttpPost]
+        public ActionResult ProductModel3DUpdate(ProductModel.ProductModel3DModel model)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var productModel3D = _productService.GetProductModel3DById(model.Id);
+            if (productModel3D == null)
+                throw new ArgumentException("No product model 3D found with the specified id");
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null)
+            {
+                var product = _productService.GetProductById(productModel3D.ProductId);
+                if (product != null && product.VendorId != _workContext.CurrentVendor.Id)
+                {
+                    return Content("This is not your product");
+                }
+            }
+
+            productModel3D.DisplayOrder = model.DisplayOrder;
+            _productService.UpdateProductModel3D(productModel3D);
+
+            return new NullJsonResult();
+        }
+
+        [HttpPost]
+        public ActionResult ProductModel3DDelete(int id)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var product3Dmodel = _productService.GetProductModel3DById(id);
+            if (product3Dmodel == null)
+                throw new ArgumentException("No product model3D found with the specified id");
+
+            var productId = product3Dmodel.ProductId;
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null)
+            {
+                var product = _productService.GetProductById(productId);
+                if (product != null && product.VendorId != _workContext.CurrentVendor.Id)
+                {
+                    return Content("This is not your product");
+                }
+            }
+            var model3DId = product3Dmodel.Model3DId;
+            _productService.DeleteProductModel3D(product3Dmodel);
+            var model3D = _model3DService.GetModel3DById(model3DId);
+            _model3DService.DeleteModel3D(model3D);
 
             return new NullJsonResult();
         }

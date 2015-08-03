@@ -1,10 +1,12 @@
 using Nop.Core.Domain.Shipping;
+using System;
 
 namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
     /// Represents a record to manage product inventory per warehouse
     /// </summary>
+    [Serializable]
     public partial class ProductWarehouseInventory : BaseEntity
     {
         /// <summary>

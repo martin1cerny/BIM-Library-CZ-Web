@@ -11,6 +11,7 @@ namespace Nop.Web.Models.Catalog
         {
             ProductPrice = new ProductPriceModel();
             DefaultPictureModel = new PictureModel();
+            DefaultModel3DModel = new Model3DModel();
             SpecificationAttributeModels = new List<ProductSpecificationModel>();
             ReviewOverviewModel = new ProductReviewOverviewModel();
         }
@@ -24,6 +25,7 @@ namespace Nop.Web.Models.Catalog
         public ProductPriceModel ProductPrice { get; set; }
         //picture
         public PictureModel DefaultPictureModel { get; set; }
+        public Model3DModel DefaultModel3DModel { get; set; }
         //specification attributes
         public IList<ProductSpecificationModel> SpecificationAttributeModels { get; set; }
         //price

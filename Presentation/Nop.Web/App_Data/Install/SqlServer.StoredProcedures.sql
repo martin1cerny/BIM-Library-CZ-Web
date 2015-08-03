@@ -193,13 +193,17 @@ BEGIN
 		INSERT INTO #KeywordProducts ([ProductId])
 		SELECT p.Id
 		FROM Product p with (NOLOCK)
+		LEFT JOIN Product_Category_Mapping pcm with (NOLOCK) ON pcm.ProductId = p.Id
+		LEFT JOIN Category c with (NOLOCK) ON c.Id = pcm.CategoryId
+		LEFT JOIN Product_Manufacturer_Mapping pmm with (NOLOCK) ON pmm.ProductId = p.Id
+		LEFT JOIN Manufacturer m with (NOLOCK) ON m.Id = pmm.ManufacturerId
 		WHERE '
 		IF @UseFullTextSearch = 1
-			SET @sql = @sql + 'CONTAINS(p.[Name], @Keywords) '
+		SET @sql = @sql + 'CONTAINS(p.[Name], @Keywords) '
 		ELSE
-			SET @sql = @sql + 'PATINDEX(@Keywords, p.[Name]) > 0 '
-
-
+		SET @sql = @sql + 'PATINDEX(@Keywords, p.[Name]) > 0'
+		+ 'OR PATINDEX(@Keywords, c.[Name]) > 0'
+		+ 'OR PATINDEX(@Keywords, m.[Name]) > 0'
 		--localized product name
 		SET @sql = @sql + '
 		UNION

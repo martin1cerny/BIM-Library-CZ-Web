@@ -30,6 +30,7 @@ namespace Nop.Admin.Models.Catalog
             AvailableManufacturers = new List<SelectListItem>();
             AvailableProductAttributes = new List<SelectListItem>();
             AddPictureModel = new ProductPictureModel();
+            AddModel3DModel = new ProductModel3DModel();
             AddSpecificationAttributeModel = new AddProductSpecificationAttributeModel();
             ProductWarehouseInventoryModels = new List<ProductWarehouseInventoryModel>();
         }
@@ -380,6 +381,11 @@ namespace Nop.Admin.Models.Catalog
         public ProductPictureModel AddPictureModel { get; set; }
         public IList<ProductPictureModel> ProductPictureModels { get; set; }
 
+
+        //model3Ds
+        public ProductModel3DModel AddModel3DModel { get; set; }
+        public IList<ProductModel3DModel> ProductModel3DModels { get; set; }
+
         //discounts
         public List<DiscountModel> AvailableDiscounts { get; set; }
         public int[] SelectedDiscountIds { get; set; }
@@ -483,6 +489,22 @@ namespace Nop.Admin.Models.Catalog
             [NopResourceDisplayName("Admin.Catalog.Products.Pictures.Fields.DisplayOrder")]
             public int DisplayOrder { get; set; }
         }
+
+        public partial class ProductModel3DModel : BaseNopEntityModel
+        {
+            public int ProductId { get; set; }
+
+            [UIHint("Model3D")]
+            [NopResourceDisplayName("Admin.Catalog.Products.Model3Ds.Fields.Model")]
+            public int Model3DId { get; set; }
+
+            [NopResourceDisplayName("Admin.Catalog.Products.Model3Ds.Fields.Model")]
+            public string Model3DUrl { get; set; }
+
+            [NopResourceDisplayName("Admin.Catalog.Products.Model3Ds.Fields.DisplayOrder")]
+            public int DisplayOrder { get; set; }
+        }
+
         
         public partial class ProductCategoryModel : BaseNopEntityModel
         {
@@ -760,6 +782,7 @@ namespace Nop.Admin.Models.Catalog
         {
             public ProductAttributeValueModel()
             {
+                ProductModel3DModels = new List<ProductModel3DModel>();
                 ProductPictureModels = new List<ProductPictureModel>();
                 Locales = new List<ProductAttributeValueLocalizedModel>();
             }
@@ -811,10 +834,15 @@ namespace Nop.Admin.Models.Catalog
 
             [NopResourceDisplayName("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Picture")]
             public int PictureId { get; set; }
+
+            [NopResourceDisplayName("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Model3D")]
+            public int Model3DId { get; set; }
+
             [NopResourceDisplayName("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Picture")]
             public string PictureThumbnailUrl { get; set; }
 
             public IList<ProductPictureModel> ProductPictureModels { get; set; }
+            public IList<ProductModel3DModel> ProductModel3DModels { get; set; }
             public IList<ProductAttributeValueLocalizedModel> Locales { get; set; }
 
             #region Nested classes

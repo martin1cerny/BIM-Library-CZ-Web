@@ -1,6 +1,22 @@
-﻿@{
+﻿@using Nop.Core;
+@using Nop.Core.Infrastructure;
+@using Nop.Services.Orders;
+
+@{
     Layout = "~/Views/Shared/_Root.Head.cshtml";
+    var customer = EngineContext.Current.Resolve<IWorkContext>().CurrentCustomer;
+
+    int shoppingCartItems = 0;
+    if (customer.HasShoppingCartItems)
+    {
+        shoppingCartItems = customer.ShoppingCartItems
+            .Where(sci => sci.ShoppingCartType == Nop.Core.Domain.Orders.ShoppingCartType.ShoppingCart)
+            .LimitPerStore(EngineContext.Current.Resolve<IStoreContext>().CurrentStore.Id)
+            .ToList()
+            .GetTotalProducts();
+    } 
 }
+
 @Html.Widget("body_start_html_tag_after")
 @Html.Partial("_Notifications")
 @Html.Action("AdminHeaderLinks", "Common")
@@ -25,10 +41,32 @@
         </div>
         @Html.Widget("content_after")
     </div>
-    <div class="footer_picture">
-        <img src="@Url.Content("~/Themes/DefaultClean/Content/images/footer.png")" alt="" /> 
+    <div class="cart_picture">
+        <span class="cart-button-text">
+            <button type="submit" class="cart-button" name="add" onclick="setLocation('cart')">
+                @T("Shoppingcart.Shoppingcart") <br>
+                @T("Shoppingcart.Mini.items", shoppingCartItems)
+            </button>
+        </span>
     </div>
    @*@JSK -> remove @Html.Action("Footer", "Common") *@
     </div>
+    <div class="footer_picture_start" id="root_footer">
+        <div class="nopCommeranceLink"> <a href="http://www.nopCommerce.com">powered by nopCommerce</a> </div>
+    @* <img src="@Url.Content("~/Themes/DefaultClean/Content/images/footer.svg")" alt="" style="width:100%" /> *@
+    </div>
     @Html.Action("EuCookieLaw", "Common")
     @Html.Widget("body_end_html_tag_before")
+
+<!--
+<script>
+    $(function () {
+        var bht = $('body').height();
+        var wht = $(window).height();
+        if (wht >= bht) {
+            $('#root_footer').css("position", "absolute");
+            $('#root_footer').css("bottom", "0px");
+        }
+    });
+</script>
+-->

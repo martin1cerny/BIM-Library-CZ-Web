@@ -37,5 +37,17 @@ namespace Nop.Core.Domain.Media
             get { return _productPictures ?? (_productPictures = new List<ProductPicture>()); }
             protected set { _productPictures = value; }
         }
+
+        public static Picture clone(Picture cloneObject)
+        {
+            Picture newObject = new Picture();
+            newObject.Id = cloneObject.Id;
+            newObject.IsNew = cloneObject.IsNew;
+            newObject.MimeType = cloneObject.MimeType;
+            newObject.PictureBinary = cloneObject.PictureBinary;
+            //newObject.ProductModel3Ds = cloneObject.ProductModel3Ds; @JSK TODO:
+            newObject.SeoFilename = cloneObject.SeoFilename;
+            return newObject;
+        }
     }
 }

@@ -401,6 +401,42 @@ namespace Nop.Services.Catalog
 
         #endregion
 
+        #region Product 3Dmodels
+
+        /// <summary>
+        /// Deletes a product model
+        /// </summary>
+        /// <param name="productPicture">Product model</param>
+        void DeleteProductModel3D(ProductModel3D productModel);
+
+        /// <summary>
+        /// Gets a product models by product identifier
+        /// </summary>
+        /// <param name="productId">The product identifier</param>
+        /// <returns>Product models</returns>
+        IList<ProductModel3D> GetProductModel3DsByProductId(int productId);
+
+        /// <summary>
+        /// Gets a product model
+        /// </summary>
+        /// <param name="productModelId">Product model identifier</param>
+        /// <returns>Product model</returns>
+        ProductModel3D GetProductModel3DById(int productModelId);
+
+        /// <summary>
+        /// Inserts a product model
+        /// </summary>
+        /// <param name="productModel">Product model</param>
+        void InsertProductModel3D(ProductModel3D productModel3D);
+
+        /// <summary>
+        /// Updates a product modul
+        /// </summary>
+        /// <param name="productModul">Product modul</param>
+        void UpdateProductModel3D(ProductModel3D productModel3D);
+
+        #endregion
+
         #region Product reviews
 
         /// <summary>

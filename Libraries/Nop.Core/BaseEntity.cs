@@ -5,6 +5,7 @@ namespace Nop.Core
     /// <summary>
     /// Base class for entities
     /// </summary>
+    [Serializable]
     public abstract partial class BaseEntity
     {
         /// <summary>

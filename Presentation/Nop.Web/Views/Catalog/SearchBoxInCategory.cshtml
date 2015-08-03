@@ -3,20 +3,20 @@
 @{
     var searchTooltip = T("Search.SearchBox.Tooltip");
 }
-@using (Html.BeginRouteForm("ProductSearch", FormMethod.Get, new {onsubmit = "return check_small_search_form()"}))
+@using (Html.BeginRouteForm("ProductSearch", FormMethod.Get, new { onsubmit = "return check_small_search_form()" }))
 {
-    <input type="text" class="search-box-text2" id="small-searchterms" autocomplete="off" value="@searchTooltip" name="q" />
+    <input type="text" class="search-box-in-category-text" id="small-searchterms-in-category" autocomplete="off" value="@searchTooltip" name="q" />
     @Html.Widget("searchbox_before_search_button")
-    <input type="submit" class="button-1 search-box-button" value="@T("Search")" />
+    <input type="submit" class="button-1 search-box-in-category-button" value="" />
     <script type="text/javascript">
         $(document).ready(function() {
-            $("#small-searchterms").focus(function() {
+            $("#small-searchterms-in-category").focus(function() {
                 if (this.value == '@T("Search.SearchBox.Tooltip")') {
                     this.value = '';
                 }
             });
 
-            $("#small-searchterms").blur(function() {
+            $("#small-searchterms-in-category").blur(function() {
                 if (this.value == '') {
                     this.value = '@searchTooltip';
                 }
@@ -24,7 +24,7 @@
         });
 
         function check_small_search_form() {
-            var search_terms = $("#small-searchterms");
+            var search_terms = $("#small-searchterms-in-category");
             if (search_terms.val() == "" || search_terms.val() == "@searchTooltip") {
                 alert('@Html.Raw(HttpUtility.JavaScriptStringEncode(T("Search.EnterSearchTerms").Text))');
                 search_terms.focus();
@@ -39,7 +39,7 @@
         <text>
             <script type="text/javascript">
                 $(function() {
-                    $('#small-searchterms').autocomplete({
+                    $('#small-searchterms-in-category').autocomplete({
                             delay: 500,
                             minLength: @(Model.SearchTermMinimumLength.ToString()),
                             source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',

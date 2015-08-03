@@ -48,6 +48,7 @@ namespace Nop.Web.Controllers
         private readonly ITaxService _taxService;
         private readonly ICurrencyService _currencyService;
         private readonly IPictureService _pictureService;
+        private readonly IModel3DService _model3DService;
         private readonly ILocalizationService _localizationService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IPriceFormatter _priceFormatter;
@@ -83,7 +84,8 @@ namespace Nop.Web.Controllers
             IStoreContext storeContext,
             ITaxService taxService, 
             ICurrencyService currencyService,
-            IPictureService pictureService, 
+            IPictureService pictureService,
+            IModel3DService model3DService, 
             ILocalizationService localizationService,
             IPriceCalculationService priceCalculationService,
             IPriceFormatter priceFormatter,
@@ -116,6 +118,7 @@ namespace Nop.Web.Controllers
             this._taxService = taxService;
             this._currencyService = currencyService;
             this._pictureService = pictureService;
+            this._model3DService = model3DService;
             this._localizationService = localizationService;
             this._priceCalculationService = priceCalculationService;
             this._priceFormatter = priceFormatter;
@@ -398,7 +401,7 @@ namespace Nop.Web.Controllers
                 _storeContext, _categoryService, _productService, _specificationAttributeService,
                 _priceCalculationService, _priceFormatter, _permissionService,
                 _localizationService, _taxService, _currencyService,
-                _pictureService, _webHelper, _cacheManager,
+                _pictureService, _model3DService,_webHelper, _cacheManager,
                 _catalogSettings, _mediaSettings, products,
                 preparePriceModel, preparePictureModel,
                 productThumbPictureSize, prepareSpecificationAttributes,
@@ -1405,6 +1408,19 @@ namespace Nop.Web.Controllers
 
 
         [ChildActionOnly]
+        public ActionResult SearchBoxInProduct()
+        {
+            var model = new SearchBoxInProductModel
+            {
+                AutoCompleteEnabled = _catalogSettings.ProductSearchAutoCompleteEnabled,
+                ShowProductImagesInSearchAutoComplete = _catalogSettings.ShowProductImagesInSearchAutoComplete,
+                SearchTermMinimumLength = _catalogSettings.ProductSearchTermMinimumLength
+            };
+            return PartialView(model);
+        }
+
+
+        [ChildActionOnly]
         public ActionResult SearchBoxInCategory()
         {
             var model = new SearchBoxInCategoryModel
@@ -1416,9 +1432,6 @@ namespace Nop.Web.Controllers
             return PartialView(model);
         }
 
-
-
-
         public ActionResult SearchTermAutoComplete(string term)
         {
             if (String.IsNullOrWhiteSpace(term) || term.Length < _catalogSettings.ProductSearchTermMinimumLength)
@@ -1427,7 +1440,7 @@ namespace Nop.Web.Controllers
             //products
             var productNumber = _catalogSettings.ProductSearchAutoCompleteNumberOfProducts > 0 ?
                 _catalogSettings.ProductSearchAutoCompleteNumberOfProducts : 10;
-
+            
             var products = _productService.SearchProducts(
                 storeId: _storeContext.CurrentStore.Id,
                 keywords: term,
@@ -1436,8 +1449,12 @@ namespace Nop.Web.Controllers
                 visibleIndividuallyOnly: true,
                 pageSize: productNumber);
 
+            //JSK ADD: categories
+            var categories = _categoryService.GetAllCategories(term);
+            
+
             var models =  PrepareProductOverviewModels(products, false, _catalogSettings.ShowProductImagesInSearchAutoComplete, _mediaSettings.AutoCompleteSearchThumbPictureSize).ToList();
-            var result = (from p in models
+            var resultModels = (from p in models
                           select new
                           {
                               label = p.Name,
@@ -1445,6 +1462,16 @@ namespace Nop.Web.Controllers
                               productpictureurl = p.DefaultPictureModel.ImageUrl
                           })
                           .ToList();
+            string categoriesText =  _localizationService.GetResource("admin.catalog.categories");
+
+            var resultCategories = (from p in categories
+                                    select new
+                                    {
+                                        label = p.Name + " (" + categoriesText + ") ",
+                                        producturl = Url.RouteUrl("Category", new { SeName = p.GetSeName() }),
+                                        productpictureurl = ""
+                                    }).ToList();
+            var result = resultModels.Concat(resultCategories);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 

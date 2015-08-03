@@ -1,8 +1,23 @@
 ﻿@using Nop.Web.Framework.Menu;
+@using Nop.Core.Domain.Customers;
+@using Nop.Services.Customers;
+@using Nop.Core;
 @{
     //load sitemap
     var siteMap = new Nop.Web.Framework.Menu.XmlSiteMap();
-    siteMap.LoadFrom("~/Administration/sitemap.config");
+    bool superAdministrator = EngineContext.Current.Resolve<IWorkContext>().CurrentCustomer.IsInCustomerRole("SuperAdministrators");
+    bool administrator = EngineContext.Current.Resolve<IWorkContext>().CurrentCustomer.IsInCustomerRole("Administrators");
+    bool addModel = EngineContext.Current.Resolve<IWorkContext>().CurrentCustomer.IsInCustomerRole("AddModels");
+    
+    //User.IsInRole("Administrators")) { Do that; } else { Do this; } 
+    if (administrator && superAdministrator)
+    {
+        siteMap.LoadFrom("~/Administration/sitemap-admin.config");
+    }
+    else if (administrator && addModel)
+    {
+        siteMap.LoadFrom("~/Administration/sitemap-model.config");   
+    }
     
     //menu plugin
     var adminMenuPlugins = EngineContext.Current.Resolve<Nop.Core.Plugins.IPluginFinder>()

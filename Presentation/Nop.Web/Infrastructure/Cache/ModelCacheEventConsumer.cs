@@ -93,6 +93,14 @@ namespace Nop.Web.Infrastructure.Cache
         IConsumer<EntityInserted<ProductPicture>>,
         IConsumer<EntityUpdated<ProductPicture>>,
         IConsumer<EntityDeleted<ProductPicture>>,
+        //Model3D
+        IConsumer<EntityInserted<Model3D>>,
+        IConsumer<EntityUpdated<Model3D>>,
+        IConsumer<EntityDeleted<Model3D>>,
+        //Product Model3D mapping
+        IConsumer<EntityInserted<ProductModel3D>>,
+        IConsumer<EntityUpdated<ProductModel3D>>,
+        IConsumer<EntityDeleted<ProductModel3D>>,
         //polls
         IConsumer<EntityInserted<Poll>>,
         IConsumer<EntityUpdated<Poll>>,
@@ -476,6 +484,76 @@ namespace Nop.Web.Infrastructure.Cache
         /// </remarks>
         public const string CART_PICTURE_MODEL_KEY = "Nop.pres.cart.picture-{0}-{1}-{2}-{3}-{4}-{5}";
         public const string CART_PICTURE_PATTERN_KEY = "Nop.pres.cart.picture";
+
+
+        /// <summary>
+        /// Key for default product model3D caching (all model3Ds)
+        /// </summary>
+        /// <remarks>
+        /// {0} : product id
+        /// {1} : isAssociatedProduct?
+        /// {2} : language ID ("alt" and "title" can depend on localized product name)
+        /// {3} : is connection SSL secured?
+        /// {4} : current store ID
+        /// </remarks>
+        public const string PRODUCT_DEFAULTMODEL3D_MODEL_KEY = "Nop.pres.product.detailsmodel3Ds-{0}-{1}-{2}-{3}-{4}";
+        public const string PRODUCT_DEFAULTMODEL3D_PATTERN_KEY = "Nop.pres.product.detailsmodel3Ds";
+
+        /// <summary>
+        /// Key for product model3D caching on the product details page
+        /// </summary>
+        /// <remarks>
+        /// {0} : product id
+        /// {1} : value indicating whether a default model3D is displayed in case if no real model3D exists
+        /// {2} : language ID ("alt" and "title" can depend on localized product name)
+        /// {3} : is connection SSL secured?
+        /// {4} : current store ID
+        /// </remarks>
+        public const string PRODUCT_DETAILS_MODEL3DS_MODEL_KEY = "Nop.pres.product.model3D-{1}-{2}-{3}-{4}";
+        public const string PRODUCT_DETAILS_TMODEL3DS_PATTERN_KEY = "Nop.pres.product.model3D";
+
+        /// <summary>
+        /// Key for category model3D caching
+        /// </summary>
+        /// <remarks>
+        /// {0} : category id
+        /// {1} : value indicating whether a default model3D is displayed in case if no real model3D exists
+        /// {2} : language ID ("alt" and "title" can depend on localized category name)
+        /// {3} : is connection SSL secured?
+        /// {4} : current store ID
+        /// </remarks>
+        public const string CATEGORY_MODEL3D_MODEL_KEY = "Nop.pres.category.model3D-{0}-{1}-{2}-{3}-{4}";
+        public const string CATEGORY_MODEL3D_PATTERN_KEY = "Nop.pres.category.model3D";
+
+        /// <summary>
+        /// Key for manufacturer model3D caching
+        /// </summary>
+        /// <remarks>
+        /// {0} : manufacturer id
+        /// {1} : value indicating whether a default model3D is displayed in case if no real model3D exists
+        /// {2} : language ID ("alt" and "title" can depend on localized manufacturer name)
+        /// {3} : is connection SSL secured?
+        /// {4} : current store ID
+        /// </remarks>
+        public const string MANUFACTURER_MODEL3D_MODEL_KEY = "Nop.pres.manufacturer.model3D-{0}-{1}-{2}-{3}-{4}";
+        public const string MANUFACTURER_MODEL3D_PATTERN_KEY = "Nop.pres.manufacturer.model3D";
+
+        /// <summary>
+        /// Key for cart model3D caching
+        /// </summary>
+        /// <remarks>
+        /// {0} : shopping cart item id
+        /// P.S. we could cache by product ID. it could increase performance.
+        /// but it won't work for product attributes with custom images
+        /// {1} : value indicating whether a default model3D is displayed in case if no real model3D exists
+        /// {2} : language ID ("alt" and "title" can depend on localized product name)
+        /// {3} : is connection SSL secured?
+        /// {4} : current store ID
+        /// </remarks>
+        public const string CART_MODEL3D_MODEL_KEY = "Nop.pres.cart.model3D-{0}-{1}-{2}-{3}-{4}";
+        public const string CART_MODEL3D_PATTERN_KEY = "Nop.pres.cart.model3D";
+
+
 
         /// <summary>
         /// Key for home page polls
@@ -982,6 +1060,59 @@ namespace Nop.Web.Infrastructure.Cache
             _cacheManager.RemoveByPattern(PRODUCT_DEFAULTPICTURE_PATTERN_KEY);
             _cacheManager.RemoveByPattern(PRODUCT_DETAILS_TPICTURES_PATTERN_KEY);
             _cacheManager.RemoveByPattern(CART_PICTURE_PATTERN_KEY);
+        }
+
+
+        //Model3D
+        public void HandleEvent(EntityInserted<Model3D> eventMessage)
+        {
+            _cacheManager.RemoveByPattern(PRODUCT_DEFAULTMODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(PRODUCT_DETAILS_TMODEL3DS_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CATEGORY_MODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CATEGORY_HOMEPAGE_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CATEGORY_SUBCATEGORIES_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(MANUFACTURER_MODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CART_MODEL3D_PATTERN_KEY);
+        }
+        public void HandleEvent(EntityUpdated<Model3D> eventMessage)
+        {
+            _cacheManager.RemoveByPattern(PRODUCT_DEFAULTMODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(PRODUCT_DETAILS_TMODEL3DS_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CATEGORY_MODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CATEGORY_HOMEPAGE_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CATEGORY_SUBCATEGORIES_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(MANUFACTURER_MODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CART_MODEL3D_PATTERN_KEY);
+        }
+        public void HandleEvent(EntityDeleted<Model3D> eventMessage)
+        {
+            _cacheManager.RemoveByPattern(PRODUCT_DEFAULTMODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(PRODUCT_DETAILS_TMODEL3DS_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CATEGORY_MODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CATEGORY_HOMEPAGE_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CATEGORY_SUBCATEGORIES_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(MANUFACTURER_MODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CART_MODEL3D_PATTERN_KEY);
+        }
+
+        //Product model3D mappings
+        public void HandleEvent(EntityInserted<ProductModel3D> eventMessage)
+        {
+            _cacheManager.RemoveByPattern(PRODUCT_DEFAULTMODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(PRODUCT_DETAILS_TMODEL3DS_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CART_MODEL3D_PATTERN_KEY);
+        }
+        public void HandleEvent(EntityUpdated<ProductModel3D> eventMessage)
+        {
+            _cacheManager.RemoveByPattern(PRODUCT_DEFAULTMODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(PRODUCT_DETAILS_TMODEL3DS_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CART_MODEL3D_PATTERN_KEY);
+        }
+        public void HandleEvent(EntityDeleted<ProductModel3D> eventMessage)
+        {
+            _cacheManager.RemoveByPattern(PRODUCT_DEFAULTMODEL3D_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(PRODUCT_DETAILS_TMODEL3DS_PATTERN_KEY);
+            _cacheManager.RemoveByPattern(CART_MODEL3D_PATTERN_KEY);
         }
 
         //Polls

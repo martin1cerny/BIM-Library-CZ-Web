@@ -1,5 +1,45 @@
 ﻿@model OrderDetailsModel
 @using Nop.Web.Models.Order
+@using Ionic.Zip
+
+@{ 
+    //Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+    Html.AddHeadCustomParts("<meta http-equiv=\"refresh\" content=\"3; url=http://www.dsl.sk\" />"); 
+}
+
+
+<script>
+    //Model.Items
+    @if (Model.Items != null)
+    {
+        Response.AddHeader("Content-Disposition", "attachment; filename=" + Model.Id + ".zip");
+        Response.ContentType = "application/zip";
+        string apPath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath;
+        using (ZipFile zip = new ZipFile("C:/VUT BIM/!no_remove!/data/"))
+        {
+            foreach (var item in Model.Items)
+            {
+                if (!zip.ContainsEntry(item.ProductName + "_" + item.ProductId + "/"))
+                {
+                    if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/forAll"))
+                    {
+                        zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/forAll", item.ProductName + "_" + item.ProductId);
+                    }
+                }
+                if (item.FilesForAtributeId != -1)
+                {
+                    if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/" + item.FilesForAtributeId))
+                    {
+                        zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/" + item.FilesForAtributeId, item.ProductName + "_" + item.ProductId + "/" + item.AttributeInfo);
+                    }
+                }
+            }
+            zip.Save(Response.OutputStream);
+        }
+    }
+   
+</script>
+@*
 @{
     if (!Model.PrintMode)
     {
@@ -12,6 +52,9 @@
     //title
     Html.AddTitleParts(T("PageTitle.OrderDetails").Text);
 }
+
+
+
 @if (Model.PrintMode)
 {
     <script type="text/javascript">
@@ -20,7 +63,9 @@
         });
     </script>
 }
+
 <div class="page order-details-page">
+    
     @if (!Model.PrintMode)
     {
         <div class="page-title">
@@ -162,7 +207,7 @@
                                     }
                                     if (!Model.PrintMode && Model.CanRePostProcessPayment)
                                     {
-                                        @*Complete payment (for redirection payment methods)*@
+                                       Complete payment (for redirection payment methods)
                                     <li class="repost">
                                         @using (Html.BeginRouteForm("OrderDetails", FormMethod.Post))
                                         {
@@ -713,4 +758,6 @@
         }
         @Html.Widget("orderdetails_page_bottom", Model.Id)
     </div>
+    
 </div>
+    *@

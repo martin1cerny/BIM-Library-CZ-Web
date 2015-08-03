@@ -43,7 +43,7 @@
     }
 </script>
 <table class="adminContent">
-    <tr>
+    @*<tr>
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.AttributeValueTypeId):
         </td>
@@ -72,6 +72,7 @@
             @Html.ValidationMessageFor(model => model.Quantity)
         </td>
     </tr>
+    *@
 </table>
 @(Html.LocalizedEditor<ProductModel.ProductAttributeValueModel, ProductModel.ProductAttributeValueLocalizedModel>("productattributevalue-localized",
 @<table class="adminContent">
@@ -121,7 +122,7 @@
                 @Html.ValidationMessageFor(model => model.ColorSquaresRgb)
             </td>
         </tr>
-    }
+    }@*
     <tr id="group-price-adjustment">
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.PriceAdjustment):
@@ -158,6 +159,7 @@
             @Html.ValidationMessageFor(model => model.IsPreSelected)
         </td>
     </tr>
+    *@
     <tr>
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.DisplayOrder):
@@ -167,6 +169,7 @@
             @Html.ValidationMessageFor(model => model.DisplayOrder)
         </td>
     </tr>
+    @*
     <tr>
         <td class="adminTitle">
             @Html.NopLabelFor(model => model.PictureId):
@@ -208,5 +211,6 @@
             @Html.ValidationMessageFor(model => model.PictureId)
         </td>
     </tr>
+    *@
 </table>
 

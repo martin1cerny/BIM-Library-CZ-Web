@@ -72,6 +72,11 @@ namespace Nop.Core.Domain.Orders
         public string AttributeDescription { get; set; }
 
         /// <summary>
+        /// Gets or sets the attribute description
+        /// </summary>
+        public int FilesForAtributeId { get; set; }
+
+        /// <summary>
         /// Gets or sets the product attributes in XML format
         /// </summary>
         public string AttributesXml { get; set; }

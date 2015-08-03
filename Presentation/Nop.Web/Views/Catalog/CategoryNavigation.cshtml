@@ -50,8 +50,11 @@
 @if (Model.Categories.Count > 0)
 {
     <div class="block block-category-navigation">
-        <div class="title">
-            <strong>@T("Categories")</strong>
+       <div class="page-title">
+            <h1>@T("Categories")</h1>
+      </div>
+        <div class="search-box-in-category">
+            @Html.Action("SearchBoxInCategory", "Catalog")
         </div>
         <div class="listbox">
             <ul class="list">

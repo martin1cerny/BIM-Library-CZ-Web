@@ -87,12 +87,13 @@
                         confirmation: false,
                         mode: "inline"
                     },
+                    selectable: true,
                     scrollable: false,
                     columns: [{
                             field: "CategoryId",
                             title: "@T("Admin.Catalog.Products.Categories.Fields.Category")",
                             width: 200,
-                            editor: categoryDropDownEditor, 
+                            editor: categoryTreeEditor, 
                             template: "#:Category#"
                         },
                         @if (!Model.IsLoggedInAsVendor)
@@ -145,7 +146,9 @@
                 }
             ];
 
-            function categoryDropDownEditor(container, options) {
+
+
+            function categoryDropDownEditor(container, options) { 
                 $('<input required data-text-field="Name" data-value-field="Id" data-bind="value:CategoryId"/>')
                     .appendTo(container)
                     .kendoDropDownList({
@@ -153,12 +156,82 @@
                         dataSource: allCategories
                     });
             }
+
+
+            function categoryTreeEditor(container, options){
+                var grid = $("#productcategories-grid").data("kendoGrid");
+                @*var rowIdx;
+                $(grid.tbody).on("click", "td", function (e) 
+                {
+                    var row = $(this).closest("tr");
+                    var rowIdx = $("tr", grid.tbody).index(row);
+                    alert(rowIdx);
+                });
+                *@
+
+                var selectedRow = grid.select();
+                var index = selectedRow.index();
+
+                $('<table class="adminContent">').appendTo(container)
+                $('<tr>').appendTo(container)
+                $('<td>').appendTo(container)
+                $('<div id="category-treeview"></div>').appendTo(container)
+                showKendoTreeView(index)
+                $('</td>').appendTo(container)
+                $('</tr>').appendTo(container)
+                $('</table>').appendTo(container)
+            }
+            
+           
+
+            var categories = new kendo.data.HierarchicalDataSource({
+                transport: {
+                    read: {
+                        url: "@Html.Raw(Url.Action("TreeLoadChildren", "Category"))",
+                    type: "POST",
+                    dataType: "json"
+                }
+            },
+                schema: {
+                model: {
+                        id: "id",
+                        hasChildren: "hasChildren"
+                }
+            }
+            });
+
+            function showKendoTreeView(rowIdx){
+                $("#category-treeview").kendoTreeView({
+                    dataSource: categories,
+                    dataTextField: "Name",
+                    select: function (e) {
+                        var dataItem = this.dataItem(e.node);
+                        var firstItem = $('#productcategories-grid').data().kendoGrid.dataSource.data()[rowIdx];
+                        firstItem.set('CategoryId',dataItem.id);
+                    }
+                });
+            }
+
+
+
         </script>
     }
     else
     {
     @T("Admin.Catalog.Products.Categories.NoCategoriesAvailable")
     }
+    @*
+    <table class="adminContent">
+        <tr>
+            <td>
+                <div id="category-treeview"></div>
+                <script>
+                    $(document).ready(showKendoTreeView())
+                </script>
+            </td>
+        </tr>
+    </table>*@
+
 }
 else
 {
