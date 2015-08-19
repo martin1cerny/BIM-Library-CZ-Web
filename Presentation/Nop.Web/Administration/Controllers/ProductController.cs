@@ -84,6 +84,7 @@ namespace Nop.Admin.Controllers
         private readonly IProductAttributeFormatter _productAttributeFormatter;
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IDownloadService _downloadService;
+        private readonly IModelVariantService _modelVariantService;
 
         #endregion
 
@@ -129,7 +130,8 @@ namespace Nop.Admin.Controllers
             IShoppingCartService shoppingCartService,
             IProductAttributeFormatter productAttributeFormatter,
             IProductAttributeParser productAttributeParser,
-            IDownloadService downloadService)
+            IDownloadService downloadService,
+            IModelVariantService modelVariantService)
         {
             this._productService = productService;
             this._productTemplateService = productTemplateService;
@@ -172,6 +174,7 @@ namespace Nop.Admin.Controllers
             this._productAttributeParser = productAttributeParser;
             this._downloadService = downloadService;
             this._model3DService = model3DService;
+            this._modelVariantService = modelVariantService;
         }
 
         #endregion 
@@ -625,8 +628,20 @@ namespace Nop.Admin.Controllers
                         model.AddSpecificationAttributeModel.AvailableOptions.Add(new SelectListItem { Text = sao.Name, Value = sao.Id.ToString() });
                 }
             }
+
+
+            //model variants XXX:
+            var modelVariants = _modelVariantService.GetModelVariants();
+            for (int i = 0; i < modelVariants.Count; i++)
+            {
+                var mv = modelVariants[i];
+                model.AddModelVariantModel.AvailableModelVariants.Add(new SelectListItem { Text = mv.Name, Value = mv.Id.ToString() });
+            }
+
             //default specs values
             model.AddSpecificationAttributeModel.ShowOnProductPage = true;
+
+            
 
             //discounts
             model.AvailableDiscounts = _discountService
@@ -2558,6 +2573,125 @@ namespace Nop.Admin.Controllers
         }
 
         #endregion
+
+        #region Product model variants
+
+        [ValidateInput(false)]
+        public ActionResult ProductModelVariantAdd(int modelVariantId, int productId)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null)
+            {
+                var product = _productService.GetProductById(productId);
+                if (product != null && product.VendorId != _workContext.CurrentVendor.Id)
+                {
+                    return RedirectToAction("List");
+                }
+            }
+
+            var pmv = new ProductModelVariant
+            {
+                ModelVariantId = modelVariantId,
+                ProductId = productId,
+            };
+            _modelVariantService.InsertProductModelVariant(pmv);
+
+            return Json(new { Result = true }, JsonRequestBehavior.AllowGet);
+        }
+        
+        [HttpPost]
+        public ActionResult ProductModelVariantList(DataSourceRequest command, int productId)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null)
+            {
+                var product = _productService.GetProductById(productId);
+                if (product != null && product.VendorId != _workContext.CurrentVendor.Id)
+                {
+                    return Content("This is not your product");
+                }
+            }
+
+            var productModelVariants = _modelVariantService.GetProductModelVariantsByProductId(productId);
+
+            var productrSpecsModel = productModelVariants
+                .Select(x =>
+                {
+                    var psaModel = new ProductModelVariantModel
+                    {
+                        Id = x.Id,
+                        //ProductId = x.ProductId,
+                        //ModelVariantId = x.Id,
+                        ModelVariantName = x.ModelVariant.Name
+                    };
+                    return psaModel;
+                })
+                .ToList();
+
+            var gridModel = new DataSourceResult
+            {
+                Data = productrSpecsModel,
+                Total = productrSpecsModel.Count
+            };
+
+            return Json(gridModel);
+        }
+
+        [HttpPost]
+        public ActionResult ProductModelVariantUpdate(ProductSpecificationAttributeModel model)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var psa = _specificationAttributeService.GetProductSpecificationAttributeById(model.Id);
+            if (psa == null)
+                return Content("No product specification attribute found with the specified id");
+
+            var productId = psa.Product.Id;
+
+            //a vendor should have access only to his products
+            if (_workContext.CurrentVendor != null)
+            {
+                var product = _productService.GetProductById(productId);
+                if (product != null && product.VendorId != _workContext.CurrentVendor.Id)
+                {
+                    return Content("This is not your product");
+                }
+            }
+
+            //we do not allow editing these fields anymore (when we have distinct attribute types)
+            //psa.CustomValue = model.CustomValue;
+            //psa.AllowFiltering = model.AllowFiltering;
+            psa.ShowOnProductPage = model.ShowOnProductPage;
+            psa.DisplayOrder = model.DisplayOrder;
+            _specificationAttributeService.UpdateProductSpecificationAttribute(psa);
+
+            return new NullJsonResult();
+        }
+
+        [HttpPost]
+        public ActionResult ProductModelVariantDelete(int id)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            var pmv = _modelVariantService.GetProductModelVariantById(id);
+            if (pmv == null)
+                throw new ArgumentException("No specification attribute found with the specified id");
+
+            _modelVariantService.DeleteProductModelVariant(pmv);
+
+            return new NullJsonResult();
+        }
+
+        #endregion
+
 
         #region Product tags
 

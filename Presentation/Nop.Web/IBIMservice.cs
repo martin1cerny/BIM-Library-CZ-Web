@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Web;
 using System.Text;
 
 namespace Nop.Web
@@ -18,7 +19,7 @@ namespace Nop.Web
         [OperationContract]
         string Test();
         [OperationContract]
-        IList<Product> GetProductByName(string name);
+        IList<Product> GetProductByName(string name, bool withPictures);
         [OperationContract]
         IList<Category> GetAllCategoriesWithLevelByParentCategoryId(int parentCategoryId,
             bool showHidden, int level);
@@ -26,7 +27,9 @@ namespace Nop.Web
         IList<Category> GetAllCategoriesByParentCategoryId(int parentCategoryId,
            bool showHidden);
         [OperationContract]
-        Stream GetZip(int productId);
+        Stream GetZipById(int productId, string variant);
+        [OperationContract]
+        Stream GetZipByName(string name, string variant);
     }
 
 }

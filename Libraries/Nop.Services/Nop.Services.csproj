@@ -210,6 +210,8 @@
     <Compile Include="Helpers\UserAgentHelper.cs" />
     <Compile Include="Logging\ClearLogTask.cs" />
     <Compile Include="Media\IModel3DService.cs" />
+    <Compile Include="Media\IModelVariantService.cs" />
+    <Compile Include="Media\ModelVariantService.cs" />
     <Compile Include="Media\Model3DService.cs" />
     <Compile Include="Media\ResizeType.cs" />
     <Compile Include="Shipping\EventPublisherExtensions.cs" />

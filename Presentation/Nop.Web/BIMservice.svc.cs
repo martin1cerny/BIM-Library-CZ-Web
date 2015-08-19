@@ -15,6 +15,9 @@ using System.ServiceModel;
 using System.Text;
 using Ionic.Zip;
 using System.Web;
+using System.ServiceModel.Web;
+using Nop.Services.Media;
+using Nop.Core.Domain.Media;
 
 namespace Nop.Web
 {
@@ -26,6 +29,9 @@ namespace Nop.Web
         #region Fields
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
+        private readonly IPictureService _pictureService;
+        private readonly IProductAttributeService _productAttributeService;
+        private readonly IModelVariantService _modelVariantService;
         #endregion
 
         #region Ctor
@@ -33,32 +39,67 @@ namespace Nop.Web
         {
             this._productService =  EngineContext.Current.Resolve<IProductService>();
             this._categoryService = EngineContext.Current.Resolve<ICategoryService>();
+            this._pictureService = EngineContext.Current.Resolve<IPictureService>();
+            this._productAttributeService = EngineContext.Current.Resolve<IProductAttributeService>();
+            this._modelVariantService = EngineContext.Current.Resolve<IModelVariantService>();
         }
         #endregion
 
 
         public string Test()
         {
-            return "It's work";
+            ModelVariant test = _modelVariantService.GetModelVariantById(1);
+            IList<ModelVariant> tests = _modelVariantService.GetModelVariants();
+            IList<ModelVariant> tests2 = _modelVariantService.GetModelVariantsByProductId(1);
+            return _modelVariantService.Test();
         }
 
-        public IList<Product> GetProductByName(string name)
+        public IList<Product> GetProductByName(string name, bool withPictures)
+        {
+
+            IList<Product> products = searchProducts(name);
+            return cloneProducts(withPictures, products);
+        }
+
+        private IList<Product> searchProducts(string name)
         {
             const int productNumber = 15;
             var vendorId = 0;
-
+            
             IList<Product> products = (IList<Product>)_productService.SearchProducts(
                 vendorId: vendorId,
                 keywords: name,
                 pageSize: productNumber,
                 showHidden: true);
+            return products;
+        }
+
+
+        private IList<Product> cloneProducts(bool withPictures, IList<Product> products)
+        {
             IList<Product> resultProducts = new List<Product>();
-            foreach (Product element in products)
+            if (withPictures)
             {
-                resultProducts.Add(Product.clone(element));
+                foreach (Product element in products)
+                {
+                    foreach (ProductPicture productPicture in element.ProductPictures)
+                    {
+                        productPicture.Picture.PictureBinary = _pictureService.LoadPictureBinary(productPicture.Picture);
+                    }
+                    resultProducts.Add(Product.clone(element));
+                }
+            }
+            else
+            {
+                foreach (Product element in products)
+                {
+                    resultProducts.Add(Product.clone(element));
+                }
             }
             return resultProducts;
         }
+        
+
 
         public IList<Category> GetAllCategoriesWithLevelByParentCategoryId(int parentCategoryId,
             bool showHidden, int level)
@@ -94,30 +135,78 @@ namespace Nop.Web
             return resultCategories;
         }
 
-        public Stream GetZip(int productId){
-            HttpContext context = System.Web.HttpContext.Current;
-            context.Response.AddHeader("Content-Disposition", "attachment; filename=" + productId + ".zip");
-            context.Response.ContentType = "application/zip";
+        //public Stream GetZipOld(int productId)
+        //{
+        //   return File.OpenRead("C:/VUT BIM/!no_remove!/data/files/ja.jpg");
+        //}
+
+        //TODO: dorobit !
+        public Stream GetZipByName(string name, string variant)
+        {
+            IList<Product> products = searchProducts(name);
+            Stream stream = new MemoryStream();
+            foreach (Product product in products)
+            {
+                GetZipById(product.Id, variant); 
+            }
+            return null;
+
+        }
+
+        public Stream GetZipById(int productId, string variant){
             string apPath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath;
+            Stream stream = new MemoryStream();
+            
+            string path = "";
+            int filesForAtributeId = -1;
+            //Vratim vsetko
+            if (variant == null)
+            {
+                path = "C:/VUT BIM/!no_remove!/data/files/" + productId;
+            }
+            else
+            {
+                path = "C:/VUT BIM/!no_remove!/data/files/" + productId + "/forAll";
+                IList<ProductAttributeMapping> productAttributeMappings =_productAttributeService.GetProductAttributeMappingsByProductId(productId);
+                ProductAttributeMapping productAttributeMapping = productAttributeMappings.FirstOrDefault(c => c.TextPrompt.Equals("model"));
+                ProductAttributeValue productAttributeValue =  productAttributeMapping.ProductAttributeValues.FirstOrDefault(c => c.Name.Equals(variant));
+                filesForAtributeId = productAttributeValue.Id;
+                //Vytvorit enum
+                //foreach (ProductAttributeValues productAttributeMapping in productAttributeMapping.ProductAttributeValues)
+                //{
+                //    if (productAttributeMapping.TextPrompt.Equals(variant))
+                //    {
+                //        filesForAtributeId = productAttributeMapping.ProductAttributeId;
+                //        break;
+                //    }
+                //}
+            }
+            
             using (ZipFile zip = new ZipFile("C:/VUT BIM/!no_remove!/data/"))
             {
-                    if (!zip.ContainsEntry("download" + "_" + productId + "/"))
+                if (!zip.ContainsEntry("download" + "_" + productId + "/"))
+                {
+
+                    if (System.IO.Directory.Exists(path))
                     {
-                        if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + productId + "/forAll"))
+                        zip.AddDirectory(path, "download" + "_" + productId);
+                    }
+                    if (filesForAtributeId != -1)
+                    {
+                        if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + productId + "/" + filesForAtributeId))
                         {
-                            zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + productId + "/forAll", "download" + "_" + productId);
+                            zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + productId + "/" + filesForAtributeId, "download_" + productId + "/" + filesForAtributeId);
                         }
                     }
-                    /*if (item.FilesForAtributeId != -1)
-                    {
-                        if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/" + item.FilesForAtributeId))
-                        {
-                            zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/" + item.FilesForAtributeId, item.ProductName + "_" + item.ProductId + "/" + item.AttributeInfo);
-                        }
-                    }*/
+                 }
+                //item.ProductName + "_" + item.ProductId + "/" + item.AttributeInfo
+
+               
                 //return zip;
-                zip.Save(context.Response.OutputStream);
-                return context.Response.OutputStream;
+                    
+                zip.Save(stream); 
+                stream.Position = 0L;
+                return stream;
             }
         }
 

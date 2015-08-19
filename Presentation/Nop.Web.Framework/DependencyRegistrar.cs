@@ -215,6 +215,8 @@ namespace Nop.Web.Framework
             builder.RegisterType<DownloadService>().As<IDownloadService>().InstancePerLifetimeScope();
             builder.RegisterType<PictureService>().As<IPictureService>().InstancePerLifetimeScope();
             builder.RegisterType<Model3DService>().As<IModel3DService>().InstancePerLifetimeScope();
+            builder.RegisterType<ModelVariantService>().As<IModelVariantService>().InstancePerLifetimeScope();
+
 
             builder.RegisterType<MessageTemplateService>().As<IMessageTemplateService>().InstancePerLifetimeScope();
             builder.RegisterType<QueuedEmailService>().As<IQueuedEmailService>().InstancePerLifetimeScope();

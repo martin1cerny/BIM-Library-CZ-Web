@@ -149,6 +149,7 @@
     <Compile Include="Controllers\JbimagesController.cs" />
     <Compile Include="Controllers\Model3DController.cs" />
     <Compile Include="Controllers\RoxyFilemanController.cs" />
+    <Compile Include="Controllers\ModelVariantController.cs" />
     <Compile Include="Controllers\TemplateController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
@@ -207,6 +208,7 @@
     <Compile Include="Models\Catalog\ProductReviewListModel.cs" />
     <Compile Include="Models\Catalog\ManufacturerModel.cs" />
     <Compile Include="Models\Catalog\CopyProductModel.cs" />
+    <Compile Include="Models\Catalog\ProductModelVariantModel.cs" />
     <Compile Include="Models\Cms\RenderWidgetModel.cs" />
     <Compile Include="Models\Common\AddressAttributeModel.cs" />
     <Compile Include="Models\Common\AddressAttributeValueModel.cs" />
@@ -1269,6 +1271,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\VUT.pubxml" />
+    <Content Include="Views\Product\_CreateOrUpdate.ProductModelVariants.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

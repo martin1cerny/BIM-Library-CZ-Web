@@ -1,0 +1,199 @@
+﻿@using Nop.Core.Domain.Catalog
+@model ProductModel
+
+@if (Model.Id > 0)
+{
+
+    /*hide "add spec" table if no attributes are defined*/
+    if (Model.AddModelVariantModel.AvailableModelVariants.Count > 0)
+    {
+        <div>
+            <div id="modelvariants-grid"></div>
+            <script>
+                $(document).ready(function() {
+                    $("#modelvariants-grid").kendoGrid({
+                        dataSource: {
+                            type: "json",
+                            transport: {
+                                read: {
+                                    url: "@Html.Raw(Url.Action("ProductModelVariantList", "Product", new { productId = Model.Id }))",
+                                    type: "POST",
+                                    dataType: "json"
+                                },
+                                update: {
+                                    url: "@Html.Raw(Url.Action("ProductModelVariantUpdate", "Product"))",
+                                    type: "POST",
+                                    dataType: "json"
+                                },
+                                destroy: {
+                                    url: "@Html.Raw(Url.Action("ProductModelVariantDelete", "Product"))",
+                                    type: "POST",
+                                    dataType: "json"
+                                }
+                            },
+                            schema: {
+                                data: "Data",
+                                total: "Total",
+                                errors: "Errors",
+                                model: {
+                                    id: "Id",
+                                    fields: {
+                                        ModelVariantName: { editable: false, type: "string" },
+                                        Id: { editable: false, type: "number" }
+                                    }
+                                }
+                            },
+                            requestEnd: function(e) {
+                                if (e.type == "update") {
+                                    this.read();
+                                }
+                            },
+                            error: function(e) {
+                                display_kendoui_grid_error(e);
+                                // Cancel the changes
+                                this.cancelChanges();
+                            },
+                            serverPaging: true,
+                            serverFiltering: true,
+                            serverSorting: true
+                        },
+                        pageable: {
+                            refresh: true,
+                            numeric: false,
+                            previousNext: false,
+                            info: false
+                        },
+                        editable: {
+                            confirmation: false,
+                            mode: "inline"
+                        },
+                        scrollable: false,
+                        columns: [{
+                            field: "ModelVariantName",
+                            title: "@T("Admin.Catalog.Products.SpecificationAttributes.Fields.SpecificationAttribute")",
+                            width: 150
+                        }, 
+                            {
+                                command: [
+                                    {
+                                        name: "edit",
+                                        text: "@T("Admin.Common.Edit")"
+                                    }, {
+                                        name: "destroy",
+                                        text: "@T("Admin.Common.Delete")"
+                                    }
+                                ],
+                                width: 200
+                            }
+                        ]
+                    });
+                });
+            </script>
+        </div>
+        <p>
+            <strong>@T("Admin.Catalog.Products.SpecificationAttributes.AddNew")</strong>
+        </p>
+        <script type="text/javascript">
+           @* $(document).ready(function() {
+                $("#@Html.FieldIdFor(model => model.AddModelVariantModel.ModelVariantId)").change(function() {
+                    var selectedAttributeId = $(this).val();
+                    $.ajax({
+                        cache: false,
+                        type: "GET",
+                        url: "@(Url.Action("GetOptionsByAttributeId", "ModelVariant"))",
+                        data: { "attributeId": selectedAttributeId },
+                        success: function(data) {
+                            var ddlSpecOptions = $("#@Html.FieldIdFor(model => model.AddSpecificationAttributeModel.SpecificationAttributeOptionId)");
+                            ddlSpecOptions.html('');
+                            $.each(data, function(id, option) {
+                                ddlSpecOptions.append($('<option></option>').val(option.id).html(option.name));
+                            });
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            alert('Failed to retrieve specification options.');
+                        }
+                    });
+                });
+            });
+            *@
+            $(document).ready(function() {
+                $('#addModelVariant').click(function() {
+                    var modelVariantId = $("#@Html.FieldIdFor(model => model.AddModelVariantModel.ModelVariantId)").val();
+                    if (modelVariantId === null) {
+                        alert('Select attribute option');
+                    } else {
+                        $('#addModelVariant').attr('disabled', true);
+                        $.ajax({
+                            cache: false,
+                            type: "POST",
+                            url: "@(Url.Action("ProductModelVariantAdd", "Product"))",
+                            data: {
+                                "modelVariantId": modelVariantId,
+                                "productId": @(Model.Id)
+                                },
+                            success: function(data) {
+                                var grid = $("#modelvariants-grid").data('kendoGrid');
+                                grid.dataSource.read();
+                                $('#addModelVariant').attr('disabled', false);
+                            },
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                alert('Failed to add specification attribute.');
+                                $('#addModelVariant').attr('disabled', false);
+                            }
+                        });
+                    }
+                });
+            });
+
+            @**
+            $(document).ready(function() {
+                $("#@Html.FieldIdFor(model => model.AddModelVariantModel.ModelVariantId)").change(toggleAttributeType);
+                toggleAttributeType();
+            });
+
+            function toggleAttributeType() {
+                var selectedTypeId = $("#@Html.FieldIdFor(model => model.AddSpecificationAttributeModel.AttributeTypeId)").val();
+                if (selectedTypeId == @(((int)SpecificationAttributeType.Option).ToString())) {
+                    $('#pnlSpecificationAttributeOptionId').show();
+                $('#pnlCustomValue').hide();
+                $('#pnlAllowFiltering').show();
+            } else if (selectedTypeId == @(((int)SpecificationAttributeType.CustomText).ToString())) {
+                $('#pnlSpecificationAttributeOptionId').hide();
+                $('#pnlCustomValue').show();
+                $('#pnlAllowFiltering').hide();
+            } else if (selectedTypeId == @(((int)SpecificationAttributeType.CustomHtmlText).ToString())) {
+                $('#pnlSpecificationAttributeOptionId').hide();
+                $('#pnlCustomValue').show();
+                $('#pnlAllowFiltering').hide();
+            } else if (selectedTypeId == @(((int)SpecificationAttributeType.Hyperlink).ToString())) {
+                $('#pnlSpecificationAttributeOptionId').hide();
+                $('#pnlCustomValue').show();
+                $('#pnlAllowFiltering').hide();
+            }*@
+            
+        </script>
+        <table class="adminContent">
+            <tr>
+                <td class="adminTitle">
+                    @Html.NopLabelFor(model => model.AddModelVariantModel.ModelVariantId):
+                </td>
+                <td class="adminData">
+                    @Html.DropDownListFor(model => model.AddModelVariantModel.ModelVariantId, Model.AddModelVariantModel.AvailableModelVariants)
+                    @Html.ValidationMessageFor(model => model.AddModelVariantModel.ModelVariantId)
+                </td>
+            <tr>
+                <td colspan="2" align="left">
+                    <input type="button" id="addModelVariant" class="k-button" value="@T("Admin.Catalog.Products.SpecificationAttributes.AddButton")" />
+                </td>
+            </tr>
+        </table>
+    }
+    else
+    {
+        @T("Admin.Catalog.Products.SpecificationAttributes.NoAttributes")
+    }
+}
+else
+{
+    @T("Admin.Catalog.Products.SpecificationAttributes.SaveBeforeEdit")
+}

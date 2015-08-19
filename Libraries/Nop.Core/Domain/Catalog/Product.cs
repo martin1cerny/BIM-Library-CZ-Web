@@ -19,6 +19,7 @@ namespace Nop.Core.Domain.Catalog
         private ICollection<ProductManufacturer> _productManufacturers;
         private ICollection<ProductPicture> _productPictures;
         private ICollection<ProductModel3D> _productModel3Ds;
+        private ICollection<ProductModelVariant> _productModelVariants;
         private ICollection<ProductReview> _productReviews;
         private ICollection<ProductSpecificationAttribute> _productSpecificationAttributes;
         private ICollection<ProductTag> _productTags;
@@ -610,6 +611,15 @@ namespace Nop.Core.Domain.Catalog
         {
             get { return _productModel3Ds ?? (_productModel3Ds = new List<ProductModel3D>()); }
             set { _productModel3Ds = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the collection of ProductModelVariant
+        /// </summary>
+        public virtual ICollection<ProductModelVariant> ProductModelVariants
+        {
+            get { return _productModelVariants ?? (_productModelVariants = new List<ProductModelVariant>()); }
+            set { _productModelVariants = value; }
         }
 
 

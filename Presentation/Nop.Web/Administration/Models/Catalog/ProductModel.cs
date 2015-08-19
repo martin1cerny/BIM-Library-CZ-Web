@@ -31,6 +31,7 @@ namespace Nop.Admin.Models.Catalog
             AvailableProductAttributes = new List<SelectListItem>();
             AddPictureModel = new ProductPictureModel();
             AddModel3DModel = new ProductModel3DModel();
+            AddModelVariantModel = new AddProductModelVariantModel();
             AddSpecificationAttributeModel = new AddProductSpecificationAttributeModel();
             ProductWarehouseInventoryModels = new List<ProductWarehouseInventoryModel>();
         }
@@ -381,6 +382,9 @@ namespace Nop.Admin.Models.Catalog
         public ProductPictureModel AddPictureModel { get; set; }
         public IList<ProductPictureModel> ProductPictureModels { get; set; }
 
+        //model variants
+        //public IList<ProductModelVariantModel> ProductModelVariantModels { get; set; }
+
 
         //model3Ds
         public ProductModel3DModel AddModel3DModel { get; set; }
@@ -395,6 +399,9 @@ namespace Nop.Admin.Models.Catalog
 
         //add specification attribute model
         public AddProductSpecificationAttributeModel AddSpecificationAttributeModel { get; set; }
+
+        //model variants
+        public AddProductModelVariantModel AddModelVariantModel { get; set; }
 
 
         //multiple warehouses
@@ -474,6 +481,30 @@ namespace Nop.Admin.Models.Catalog
             public IList<SelectListItem> AvailableAttributes { get; set; }
             public IList<SelectListItem> AvailableOptions { get; set; }
         }
+
+        public partial class AddProductModelVariantModel : BaseNopModel
+        {
+            public AddProductModelVariantModel()
+            {
+                AvailableModelVariants = new List<SelectListItem>();
+            }
+
+            [NopResourceDisplayName("XXX: Admin.Catalog.Products.SpecificationAttributes.Fields.SpecificationAttribute")]
+            public int ModelVariantId { get; set; }
+
+            [NopResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.AttributeType")]
+            public int AttributeTypeId { get; set; }
+
+            [NopResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.SpecificationAttributeOption")]
+            public int SpecificationAttributeOptionId { get; set; }
+
+            [AllowHtml]
+            [NopResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.CustomValue")]
+            public string CustomValue { get; set; }
+
+            public IList<SelectListItem> AvailableModelVariants { get; set; }
+        }
+
         
         public partial class ProductPictureModel : BaseNopEntityModel
         {
@@ -504,7 +535,6 @@ namespace Nop.Admin.Models.Catalog
             [NopResourceDisplayName("Admin.Catalog.Products.Model3Ds.Fields.DisplayOrder")]
             public int DisplayOrder { get; set; }
         }
-
         
         public partial class ProductCategoryModel : BaseNopEntityModel
         {

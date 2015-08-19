@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentModel\WriteLockDisposable.cs" />
+    <Compile Include="Domain\Catalog\ProductModelVariant.cs" />
     <Compile Include="Domain\Catalog\ProductModel3D.cs" />
     <Compile Include="Domain\Catalog\RentalPricePeriod.cs" />
     <Compile Include="Domain\Catalog\SpecificationAttributeType.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Domain\Customers\CustomerAttribute.cs" />
     <Compile Include="Domain\Customers\CustomerAttributeValue.cs" />
     <Compile Include="Domain\Customers\CustomerLoginResults.cs" />
+    <Compile Include="Domain\Media\ModelVariant.cs" />
     <Compile Include="Domain\Media\Model3D.cs" />
     <Compile Include="Domain\Orders\OrderByCountryReportLine.cs" />
     <Compile Include="Domain\Seo\WwwRequirement.cs" />
