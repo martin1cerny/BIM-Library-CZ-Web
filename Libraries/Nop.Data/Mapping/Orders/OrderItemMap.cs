@@ -11,6 +11,7 @@ namespace Nop.Data.Mapping.Orders
             this.Property(orderItem => orderItem.AttributeDescription);
             this.Property(orderItem => orderItem.FilesForAtributeId);
             this.Property(orderItem => orderItem.AttributesXml);
+            this.Property(orderItem => orderItem.ModelVariantId);
 
             this.Property(orderItem => orderItem.UnitPriceInclTax).HasPrecision(18, 4);
             this.Property(orderItem => orderItem.UnitPriceExclTax).HasPrecision(18, 4);
@@ -29,6 +30,10 @@ namespace Nop.Data.Mapping.Orders
             this.HasRequired(orderItem => orderItem.Product)
                 .WithMany()
                 .HasForeignKey(orderItem => orderItem.ProductId);
+
+            this.HasRequired(orderItem => orderItem.ModelVariant)
+               .WithMany()
+               .HasForeignKey(orderItem => orderItem.ModelVariantId);
         }
     }
 }

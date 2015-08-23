@@ -101,6 +101,8 @@
                             </td>
                         }
                         <td class="product">
+                            @Html.Raw(item.ModelVariant.Title)
+
                             <a href="@Url.RouteUrl("Product", new { SeName = item.ProductSeName })" class="product-name">@item.ProductName</a>
                             @if (!String.IsNullOrEmpty(item.AttributeInfo))
                             {

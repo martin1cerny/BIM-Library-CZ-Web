@@ -397,6 +397,8 @@ namespace Nop.Web.Controllers
                     ProductId = orderItem.Product.Id,
                     ProductName = orderItem.Product.GetLocalized(x => x.Name),
                     ProductSeName = orderItem.Product.GetSeName(),
+                    ModelVariantName = orderItem.ModelVariant.Name,
+                    ModelVariantId = orderItem.ModelVariant.Id,
                     Quantity = orderItem.Quantity,
                     AttributeInfo = orderItem.AttributeDescription,
                     FilesForAtributeId = filesForAtributeIdInt
@@ -430,6 +432,8 @@ namespace Nop.Web.Controllers
                     var priceExclTaxInCustomerCurrency = _currencyService.ConvertCurrency(orderItem.PriceExclTax, order.CurrencyRate);
                     orderItemModel.SubTotal = _priceFormatter.FormatPrice(priceExclTaxInCustomerCurrency, true, order.CustomerCurrencyCode, _workContext.WorkingLanguage, false);
                 }
+                orderItem.ModelVariantId = orderItem.ModelVariant.Id;
+
 
                 //downloadable products
                    orderItemModel.DownloadId = orderItem.Product.DownloadId;

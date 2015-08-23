@@ -19,6 +19,7 @@
         {
             foreach (var item in Model.Items)
             {
+                
                 if (!zip.ContainsEntry(item.ProductName + "_" + item.ProductId + "/"))
                 {
                     if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/forAll"))
@@ -26,11 +27,11 @@
                         zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/forAll", item.ProductName + "_" + item.ProductId);
                     }
                 }
-                if (item.FilesForAtributeId != -1)
+                if (item.ModelVariantId != -1)
                 {
-                    if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/" + item.FilesForAtributeId))
+                    if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/" + item.ModelVariantName))
                     {
-                        zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/" + item.FilesForAtributeId, item.ProductName + "_" + item.ProductId + "/" + item.AttributeInfo);
+                        zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + item.ProductId + "/" + item.ModelVariantName, item.ProductName + "_" + item.ProductId + "/" + item.ModelVariantName);
                     }
                 }
             }

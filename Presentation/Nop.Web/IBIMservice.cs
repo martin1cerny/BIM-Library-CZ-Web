@@ -1,6 +1,7 @@
 ﻿using Ionic.Zip;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,9 +28,15 @@ namespace Nop.Web
         IList<Category> GetAllCategoriesByParentCategoryId(int parentCategoryId,
            bool showHidden);
         [OperationContract]
-        Stream GetZipById(int productId, string variant);
+        Stream GetZipById(int productId, string modelVariantName);
         [OperationContract]
-        Stream GetZipByName(string name, string variant);
+        IList<ModelVariant> GetModelVariantsForProduct(int productId);
+        [OperationContract]
+        IList<ModelVariant> GetAllModelVariants();
+        [OperationContract]
+        IList<Product> GetProductByNameWithModelVariant(string name, bool withPictures, string modelVariantName);
     }
+
+
 
 }

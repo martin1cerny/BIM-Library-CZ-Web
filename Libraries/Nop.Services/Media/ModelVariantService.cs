@@ -47,8 +47,8 @@ namespace Nop.Services.Media
 
         private static readonly object s_lock = new object();
 
-        private readonly IEventPublisher _eventPublisher;
-        private readonly ICacheManager _cacheManager;
+        //private readonly IEventPublisher _eventPublisher;
+        //private readonly ICacheManager _cacheManager;
 
         private readonly IRepository<ModelVariant> _modelVariantRepository;
         //private readonly IRepository<ProductModel3D> _productModel3DRepository;

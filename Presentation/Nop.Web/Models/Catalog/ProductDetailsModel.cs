@@ -27,6 +27,7 @@ namespace Nop.Web.Models.Catalog
             ProductSpecifications= new List<ProductSpecificationModel>();
             ProductManufacturers = new List<ManufacturerModel>();
             ProductReviewOverview = new ProductReviewOverviewModel();
+            ProductModelVariant = new ProductModelVariantModel();
             TierPrices = new List<TierPriceModel>();
         }
 
@@ -36,6 +37,8 @@ namespace Nop.Web.Models.Catalog
         public Model3DModel DefaultModel3DModel { get; set; }
         public IList<PictureModel> PictureModels { get; set; }
         public IList<Model3DModel> Model3DModels { get; set; }
+
+        public ProductModelVariantModel ProductModelVariant { get; set; }
 
         public string Name { get; set; }
         public string ShortDescription { get; set; }
@@ -205,6 +208,36 @@ namespace Nop.Web.Models.Catalog
 
             public GiftCardType GiftCardType { get; set; }
         }
+
+        public partial class ProductModelVariantModel : BaseNopEntityModel
+        {
+            public int ProductId { get; set; }
+
+            public int ProductModelId { get; set; }
+
+            public string Name { get; set; }
+
+            public string TextPrompt { get; set; }
+
+            public ProductModelVariantModel()
+            {
+                Values = new List<ProductModelVariantValueModel>();
+            }
+
+            public IList<ProductModelVariantValueModel> Values { get; set; }
+        }
+
+        public partial class ProductModelVariantValueModel : BaseNopEntityModel
+        {
+            public int ProductId { get; set; }
+
+            public int ProductModelVariantId { get; set; }
+
+            public string Name { get; set; }
+
+            public bool IsPreSelected { get; set; }
+        }
+
 
         public partial class TierPriceModel : BaseNopModel
         {

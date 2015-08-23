@@ -81,6 +81,7 @@ namespace Nop.Web.Controllers
         private readonly CaptchaSettings _captchaSettings;
         private readonly SeoSettings _seoSettings;
         private readonly ICacheManager _cacheManager;
+        private readonly IModelVariantService _modelVariantService;
         
         #endregion
 
@@ -123,7 +124,8 @@ namespace Nop.Web.Controllers
             CustomerSettings customerSettings, 
             CaptchaSettings captchaSettings,
             SeoSettings seoSettings,
-            ICacheManager cacheManager)
+            ICacheManager cacheManager,
+            IModelVariantService modelVariantService)
         {
             this._categoryService = categoryService;
             this._manufacturerService = manufacturerService;
@@ -163,6 +165,7 @@ namespace Nop.Web.Controllers
             this._captchaSettings = captchaSettings;
             this._seoSettings = seoSettings;
             this._cacheManager = cacheManager;
+            this._modelVariantService = modelVariantService;
         }
 
         #endregion
@@ -599,6 +602,32 @@ namespace Nop.Web.Controllers
             }
 
             #endregion
+
+            #region Product model variants
+
+            var modelVariantModel = new ProductDetailsModel.ProductModelVariantModel
+            {
+                Name = "models",
+                ProductId = model.Id
+            };
+
+            IList<ProductModelVariant> productModelVariant = _modelVariantService.GetProductModelVariantsByProductId(product.Id);
+            foreach (var attribute in productModelVariant)
+            {
+         
+                var valueModel = new ProductDetailsModel.ProductModelVariantValueModel
+                {
+                    Id = attribute.ModelVariantId,
+                    ProductId = attribute.ProductId,
+                    Name = attribute.ModelVariant.Name
+                };
+
+                modelVariantModel.Values.Add(valueModel);   
+            }
+            model.ProductModelVariant = modelVariantModel;
+
+            #endregion
+
 
             #region Product attributes
 

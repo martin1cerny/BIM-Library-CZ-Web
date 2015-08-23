@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Media;
 
 namespace Nop.Core.Domain.Orders
 {
@@ -25,6 +26,11 @@ namespace Nop.Core.Domain.Orders
         /// Gets or sets the product identifier
         /// </summary>
         public int ProductId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the product model variant
+        /// </summary>
+        public int ModelVariantId { get; set; }
 
         /// <summary>
         /// Gets or sets the quantity
@@ -121,6 +127,11 @@ namespace Nop.Core.Domain.Orders
         /// Gets the product
         /// </summary>
         public virtual Product Product { get; set; }
+
+        /// <summary>
+        /// Gets the model variant
+        /// </summary>
+        public virtual ModelVariant ModelVariant { get; set; }
 
         /// <summary>
         /// Gets or sets the associated gift card

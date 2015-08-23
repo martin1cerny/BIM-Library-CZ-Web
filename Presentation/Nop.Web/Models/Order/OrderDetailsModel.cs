@@ -87,7 +87,8 @@ namespace Nop.Web.Models.Order
             public string AttributeInfo { get; set; }
             public string RentalInfo { get; set; }
             public int FilesForAtributeId { get; set; }
-
+            public string ModelVariantName { get; set; }
+            public int ModelVariantId { get; set; }
 
             //downloadable product properties
             public string DownloadUrl { get; set; }

@@ -262,6 +262,7 @@ namespace Nop.Admin.Controllers
             model.OrderStatus = order.OrderStatus.GetLocalizedEnum(_localizationService, _workContext);
             model.OrderStatusId = order.OrderStatusId;
             model.OrderGuid = order.OrderGuid;
+
             var store = _storeService.GetStoreById(order.StoreId);
             model.StoreName = store != null ? store.Name : "Unknown";
             model.CustomerId = order.CustomerId;
@@ -528,6 +529,7 @@ namespace Nop.Admin.Controllers
                     Id = orderItem.Id,
                     ProductId = orderItem.ProductId,
                     ProductName = orderItem.Product.Name,
+                    ModelVariantId = orderItem.ModelVariantId,
                     Sku = orderItem.Product.FormatSku(orderItem.AttributesXml, _productAttributeParser),
                     Quantity = orderItem.Quantity,
                     IsDownload = orderItem.Product.IsDownload,
@@ -2024,6 +2026,10 @@ namespace Nop.Admin.Controllers
             decimal priceExclTax;
             decimal.TryParse(form["SubTotalExclTax"], out priceExclTax);
 
+            int modelVariant;
+            int.TryParse(form["ModelVariant"], out modelVariant);
+
+
             //attributes
             //warnings
             var warnings = new List<string>();
@@ -2222,7 +2228,7 @@ namespace Nop.Admin.Controllers
             #endregion
 
             //warnings
-            warnings.AddRange(_shoppingCartService.GetShoppingCartItemAttributeWarnings(order.Customer, ShoppingCartType.ShoppingCart, product, quantity, attributesXml));
+            warnings.AddRange(_shoppingCartService.GetShoppingCartItemAttributeWarnings(order.Customer, ShoppingCartType.ShoppingCart, product, modelVariant, quantity, attributesXml));
             warnings.AddRange(_shoppingCartService.GetShoppingCartItemGiftCardWarnings(ShoppingCartType.ShoppingCart, product, attributesXml));
             warnings.AddRange(_shoppingCartService.GetRentalProductWarnings(product, rentalStartDate, rentalEndDate));
             if (warnings.Count == 0)

@@ -1,6 +1,29 @@
 ﻿@using Nop.Core.Domain.Catalog
 @model ProductModel
 
+<script>
+    function openWindow(url, id) {
+        var grid = $("#modelvariants-grid").data("kendoGrid");
+        var dataItem = $("#modelvariants-grid").data("kendoGrid").dataSource.get(id);
+  
+        var form = document.createElement('FORM');
+        form.method = 'POST';
+        form.action = url;
+
+        form.target = 'newWindow'; // Specify the name of the window(second parameter to window.open method.)
+        var input = document.createElement("INPUT");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", "folder");
+        input.setAttribute("value", @Model.Id +"/"+dataItem.ModelVariantName);
+
+        form.appendChild(input);
+        document.body.appendChild(form);
+        window.open("", "newWindow", "location=yes,width=400,height=400");
+        form.submit();
+    }
+</script>
+
+
 @if (Model.Id > 0)
 {
 
@@ -72,6 +95,13 @@
                             field: "ModelVariantName",
                             title: "@T("Admin.Catalog.Products.SpecificationAttributes.Fields.SpecificationAttribute")",
                             width: 150
+                        }, {
+                            field: "Upload",
+                            title: "@T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Files")",
+                            width: 150,
+                            template: "<a onclick=\"openWindow('http://www.narodni-bim-knihovna.cz/files/', #: Id# );\" href=\"javascript:void(0);\">UPLOAD FILES</a>"
+                            //SEM!!!  
+
                         }, 
                             {
                                 command: [

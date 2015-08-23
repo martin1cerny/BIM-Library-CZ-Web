@@ -1,6 +1,7 @@
 using System;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Media;
 
 namespace Nop.Core.Domain.Orders
 {
@@ -33,6 +34,12 @@ namespace Nop.Core.Domain.Orders
         /// Gets or sets the product attributes in XML format
         /// </summary>
         public string AttributesXml { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the model variant identifier
+        /// </summary>
+        public int ModelVariantId { get; set; }
 
         /// <summary>
         /// Gets or sets the price enter by a customer
@@ -78,6 +85,12 @@ namespace Nop.Core.Domain.Orders
                 this.ShoppingCartTypeId = (int)value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the ModelVariant
+        /// </summary>
+        public virtual ModelVariant ModelVariant { get; set; }
+
 
         /// <summary>
         /// Gets or sets the product

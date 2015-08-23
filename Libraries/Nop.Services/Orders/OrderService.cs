@@ -9,6 +9,7 @@ using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Domain.Shipping;
 using Nop.Services.Events;
+using Nop.Core.Domain.Media;
 
 namespace Nop.Services.Orders
 {
@@ -23,6 +24,7 @@ namespace Nop.Services.Orders
         private readonly IRepository<OrderItem> _orderItemRepository;
         private readonly IRepository<OrderNote> _orderNoteRepository;
         private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<ModelVariant> _modelVariantRepository;
         private readonly IRepository<RecurringPayment> _recurringPaymentRepository;
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<ReturnRequest> _returnRequestRepository;
@@ -50,7 +52,8 @@ namespace Nop.Services.Orders
             IRepository<RecurringPayment> recurringPaymentRepository,
             IRepository<Customer> customerRepository, 
             IRepository<ReturnRequest> returnRequestRepository,
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher,
+            IRepository<ModelVariant> modelVariantRepository)
         {
             this._orderRepository = orderRepository;
             this._orderItemRepository = orderItemRepository;
@@ -60,6 +63,7 @@ namespace Nop.Services.Orders
             this._customerRepository = customerRepository;
             this._returnRequestRepository = returnRequestRepository;
             this._eventPublisher = eventPublisher;
+            this._modelVariantRepository = modelVariantRepository;
         }
 
         #endregion
@@ -360,6 +364,7 @@ namespace Nop.Services.Orders
             var query = from orderItem in _orderItemRepository.Table
                         join o in _orderRepository.Table on orderItem.OrderId equals o.Id
                         join p in _productRepository.Table on orderItem.ProductId equals p.Id
+                        join m in _modelVariantRepository.Table on orderItem.ModelVariantId equals m.Id
                         where (!orderId.HasValue || orderId.Value == 0 || orderId == o.Id) &&
                         (!customerId.HasValue || customerId.Value == 0 || customerId == o.CustomerId) &&
                         (!createdFromUtc.HasValue || createdFromUtc.Value <= o.CreatedOnUtc) &&

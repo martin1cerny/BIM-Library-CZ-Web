@@ -461,6 +461,7 @@ namespace Nop.Web.Controllers
                     sci.ShoppingCartType,
                     sci.Product,
                     sci.StoreId,
+                    sci.ModelVariantId,
                     sci.AttributesXml,
                     sci.CustomerEnteredPrice,
                     sci.RentalStartDateUtc,

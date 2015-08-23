@@ -32,6 +32,7 @@ namespace Nop.Web
         private readonly IPictureService _pictureService;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IModelVariantService _modelVariantService;
+
         #endregion
 
         #region Ctor
@@ -56,10 +57,30 @@ namespace Nop.Web
 
         public IList<Product> GetProductByName(string name, bool withPictures)
         {
-
             IList<Product> products = searchProducts(name);
             return cloneProducts(withPictures, products);
         }
+
+        public IList<Product> GetProductByNameWithModelVariant(string name, bool withPictures, string modelVariantName)
+        {
+            //XXX: STRASNE NEEFEKTIVNE !!!! -> vytvorit v DB proceduru
+            //_modelVariantService.GetModelVariantsByProductId
+            IList<Product> products = searchProducts(name);
+            IList<Product> productsWithVariant = new List<Product>();
+            foreach (Product product in products)
+            {
+                IList<ModelVariant> modelVariants = _modelVariantService.GetModelVariantsByProductId(product.Id);
+                foreach (ModelVariant modelVariant in modelVariants)
+                {
+                    if (modelVariant.Name.Equals(modelVariantName)){
+                        productsWithVariant.Add(product);
+                        break;
+                    }
+                }
+            }
+            return cloneProducts(withPictures, productsWithVariant);
+        }
+
 
         private IList<Product> searchProducts(string name)
         {
@@ -140,37 +161,24 @@ namespace Nop.Web
         //   return File.OpenRead("C:/VUT BIM/!no_remove!/data/files/ja.jpg");
         //}
 
-        //TODO: dorobit !
-        public Stream GetZipByName(string name, string variant)
-        {
-            IList<Product> products = searchProducts(name);
-            Stream stream = new MemoryStream();
-            foreach (Product product in products)
-            {
-                GetZipById(product.Id, variant); 
-            }
-            return null;
-
-        }
-
-        public Stream GetZipById(int productId, string variant){
+        public Stream GetZipById(int productId, string modelVariantName){
             string apPath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath;
             Stream stream = new MemoryStream();
             
             string path = "";
-            int filesForAtributeId = -1;
+            //int filesForAtributeId = -1;
             //Vratim vsetko
-            if (variant == null)
+            if (modelVariantName == null)
             {
                 path = "C:/VUT BIM/!no_remove!/data/files/" + productId;
             }
             else
             {
                 path = "C:/VUT BIM/!no_remove!/data/files/" + productId + "/forAll";
-                IList<ProductAttributeMapping> productAttributeMappings =_productAttributeService.GetProductAttributeMappingsByProductId(productId);
-                ProductAttributeMapping productAttributeMapping = productAttributeMappings.FirstOrDefault(c => c.TextPrompt.Equals("model"));
-                ProductAttributeValue productAttributeValue =  productAttributeMapping.ProductAttributeValues.FirstOrDefault(c => c.Name.Equals(variant));
-                filesForAtributeId = productAttributeValue.Id;
+                //IList<ProductAttributeMapping> productAttributeMappings =_productAttributeService.GetProductAttributeMappingsByProductId(productId);
+                //ProductAttributeMapping productAttributeMapping = productAttributeMappings.FirstOrDefault(c => c.TextPrompt.Equals("model"));
+                //ProductAttributeValue productAttributeValue =  productAttributeMapping.ProductAttributeValues.FirstOrDefault(c => c.Name.Equals(variant));
+                //filesForAtributeId = productAttributeValue.Id;
                 //Vytvorit enum
                 //foreach (ProductAttributeValues productAttributeMapping in productAttributeMapping.ProductAttributeValues)
                 //{
@@ -189,13 +197,13 @@ namespace Nop.Web
 
                     if (System.IO.Directory.Exists(path))
                     {
-                        zip.AddDirectory(path, "download" + "_" + productId);
+                        zip.AddDirectory(path, "download" + "_" + productId+"/forAll");
                     }
-                    if (filesForAtributeId != -1)
+                    if (modelVariantName != null)
                     {
-                        if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + productId + "/" + filesForAtributeId))
+                        if (System.IO.Directory.Exists("C:/VUT BIM/!no_remove!/data/files/" + productId + "/" + modelVariantName))
                         {
-                            zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + productId + "/" + filesForAtributeId, "download_" + productId + "/" + filesForAtributeId);
+                            zip.AddDirectory("C:/VUT BIM/!no_remove!/data/files/" + productId + "/" + modelVariantName, "download_" + productId + "/" + modelVariantName);
                         }
                     }
                  }
@@ -208,6 +216,16 @@ namespace Nop.Web
                 stream.Position = 0L;
                 return stream;
             }
+        }
+
+        public IList<ModelVariant> GetModelVariantsForProduct(int productId)
+        {
+            return _modelVariantService.GetModelVariantsByProductId(productId);
+        }
+
+        public IList<ModelVariant> GetAllModelVariants()
+        {
+            return _modelVariantService.GetModelVariants();
         }
 
     }

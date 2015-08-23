@@ -1989,6 +1989,7 @@
     <Content Include="Views\Shared\_ColumnsTwo_withCategory.cshtml" />
     <Content Include="Views\Catalog\SearchBoxInCategory.cshtml" />
     <Content Include="Views\Shared\_SearchInCategory_Root.cshtml" />
+    <Content Include="Views\Product\_ProductModelVariants.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Plugins\bin\" />

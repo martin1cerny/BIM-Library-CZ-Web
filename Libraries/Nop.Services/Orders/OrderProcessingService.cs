@@ -689,7 +689,7 @@ namespace Nop.Services.Orders
                     foreach (var sci in cart)
                     {
                         var sciWarnings = _shoppingCartService.GetShoppingCartItemWarnings(customer, sci.ShoppingCartType,
-                            sci.Product, processPaymentRequest.StoreId, sci.AttributesXml,
+                            sci.Product, processPaymentRequest.StoreId, sci.ModelVariant.Id, sci.AttributesXml,
                             sci.CustomerEnteredPrice, sci.RentalStartDateUtc, sci.RentalEndDateUtc,
                             sci.Quantity, false);
                         if (sciWarnings.Count > 0)
@@ -1161,6 +1161,7 @@ namespace Nop.Services.Orders
                                 {
                                     OrderItemGuid = Guid.NewGuid(),
                                     Order = order,
+                                    ModelVariant = sc.ModelVariant,
                                     ProductId = sc.ProductId,
                                     UnitPriceInclTax = scUnitPriceInclTax,
                                     UnitPriceExclTax = scUnitPriceExclTax,
@@ -2682,7 +2683,7 @@ namespace Nop.Services.Orders
             foreach (var orderItem in order.OrderItems)
             {
                 _shoppingCartService.AddToCart(orderItem.Order.Customer, orderItem.Product,
-                    ShoppingCartType.ShoppingCart, orderItem.Order.StoreId, 
+                    ShoppingCartType.ShoppingCart, orderItem.Order.StoreId, orderItem.ModelVariantId,
                     orderItem.AttributesXml, orderItem.UnitPriceExclTax,
                     orderItem.RentalStartDateUtc, orderItem.RentalEndDateUtc,
                     orderItem.Quantity, false);

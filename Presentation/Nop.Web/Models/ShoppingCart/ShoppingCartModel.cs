@@ -58,6 +58,8 @@ namespace Nop.Web.Models.ShoppingCart
                 AllowedQuantities = new List<SelectListItem>();
                 Warnings = new List<string>();
             }
+            public ModelVariantModel ModelVariant {get ; set; }
+
             public string Sku { get; set; }
 
             public PictureModel Picture {get;set;}

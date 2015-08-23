@@ -457,6 +457,18 @@ namespace Nop.Web.Controllers
 
             foreach (var sci in cart)
             {
+                string modelVariantName = "";
+                int modelVariantId = -1;
+                if (sci.ModelVariant == null)
+                {
+                    modelVariantName = "noModelVariant";
+                    modelVariantId = -1;
+                }
+                else
+                {
+                    modelVariantName = sci.ModelVariant.Name;
+                    modelVariantId = sci.ModelVariantId;
+                }
                 var cartItemModel = new ShoppingCartModel.ShoppingCartItemModel
                 {
                     Id = sci.Id,
@@ -464,6 +476,10 @@ namespace Nop.Web.Controllers
                     ProductId = sci.Product.Id,
                     ProductName = sci.Product.GetLocalized(x => x.Name),
                     ProductSeName = sci.Product.GetSeName(),
+                    ModelVariant = new ModelVariantModel{
+                        Title = modelVariantName,
+                        ModelVariantId = modelVariantId
+                    },
                     Quantity = sci.Quantity,
                     AttributeInfo = _productAttributeFormatter.FormatAttributes(sci.Product, sci.AttributesXml),
                 };
@@ -555,6 +571,7 @@ namespace Nop.Web.Controllers
                     sci.ShoppingCartType,
                     sci.Product,
                     sci.StoreId,
+                    sci.ModelVariantId,
                     sci.AttributesXml,
                     sci.CustomerEnteredPrice,
                     sci.RentalStartDateUtc,
@@ -772,6 +789,7 @@ namespace Nop.Web.Controllers
                     sci.ShoppingCartType,
                     sci.Product,
                     sci.StoreId,
+                    sci.ModelVariantId,
                     sci.AttributesXml,
                     sci.CustomerEnteredPrice,
                     sci.RentalStartDateUtc,
@@ -1439,7 +1457,7 @@ namespace Nop.Web.Controllers
             var quantityToValidate = shoppingCartItem != null ? shoppingCartItem.Quantity + quantity : quantity;
             var addToCartWarnings = _shoppingCartService
                 .GetShoppingCartItemWarnings(_workContext.CurrentCustomer, cartType,
-                product, _storeContext.CurrentStore.Id, string.Empty, 
+                product, _storeContext.CurrentStore.Id, -1,string.Empty, 
                 decimal.Zero, null, null, quantityToValidate, false, true, false, false, false);
             if (addToCartWarnings.Count > 0)
             {
@@ -1457,6 +1475,7 @@ namespace Nop.Web.Controllers
                 product: product,
                 shoppingCartType: cartType,
                 storeId: _storeContext.CurrentStore.Id,
+                modelVariantId: -1,
                 quantity: quantity);
             if (addToCartWarnings.Count > 0)
             {
@@ -1616,6 +1635,24 @@ namespace Nop.Web.Controllers
             }
             #endregion
 
+
+            #region Model variant
+
+            int modelVariantId = -1;
+            foreach (string formKey in form.AllKeys)
+
+                //TODO: -> another solution
+                if (formKey.Contains("addtoCart_modelVariant_" + productId + "_"))
+                {
+                    int.TryParse(form[formKey], out modelVariantId);
+                    break;
+                }
+
+
+           
+            #endregion
+
+
             #region Quantity
 
             int quantity = 1;
@@ -1646,7 +1683,7 @@ namespace Nop.Web.Controllers
             {
                 //add to the cart
                 addToCartWarnings.AddRange(_shoppingCartService.AddToCart(_workContext.CurrentCustomer,
-                    product, cartType, _storeContext.CurrentStore.Id,
+                    product, cartType, _storeContext.CurrentStore.Id, modelVariantId,
                     attributes, customerEnteredPriceConverted,
                     rentalStartDate, rentalEndDate, quantity, true));
             }
@@ -1667,7 +1704,7 @@ namespace Nop.Web.Controllers
                 }
                 //update existing item
                 addToCartWarnings.AddRange(_shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer,
-                    updatecartitem.Id, attributes, customerEnteredPriceConverted,
+                    updatecartitem.Id, updatecartitem.ModelVariantId,attributes, customerEnteredPriceConverted,
                     rentalStartDate, rentalEndDate, quantity, true));
                 if (otherCartItemWithSameParameters != null && addToCartWarnings.Count == 0)
                 {
@@ -2035,7 +2072,7 @@ namespace Nop.Web.Controllers
                             if (int.TryParse(form[formKey], out newQuantity))
                             {
                                 var currSciWarnings = _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer,
-                                    sci.Id, sci.AttributesXml, sci.CustomerEnteredPrice,
+                                    sci.Id, sci.ModelVariantId, sci.AttributesXml, sci.CustomerEnteredPrice,
                                     sci.RentalStartDateUtc, sci.RentalEndDateUtc,
                                     newQuantity, true);
                                 innerWarnings.Add(sci.Id, currSciWarnings);
@@ -2414,7 +2451,7 @@ namespace Nop.Web.Controllers
                             if (int.TryParse(form[formKey], out newQuantity))
                             {
                                 var currSciWarnings = _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer,
-                                    sci.Id, sci.AttributesXml, sci.CustomerEnteredPrice,
+                                    sci.Id, sci.ModelVariantId, sci.AttributesXml, sci.CustomerEnteredPrice,
                                     sci.RentalStartDateUtc, sci.RentalEndDateUtc,
                                     newQuantity, true);
                                 innerWarnings.Add(sci.Id, currSciWarnings);
@@ -2482,7 +2519,7 @@ namespace Nop.Web.Controllers
                 {
                     var warnings = _shoppingCartService.AddToCart(_workContext.CurrentCustomer,
                         sci.Product, ShoppingCartType.ShoppingCart,
-                        _storeContext.CurrentStore.Id,
+                        _storeContext.CurrentStore.Id, sci.ModelVariantId,
                         sci.AttributesXml, sci.CustomerEnteredPrice,
                         sci.RentalStartDateUtc, sci.RentalEndDateUtc, sci.Quantity, true);
                     if (warnings.Count == 0)

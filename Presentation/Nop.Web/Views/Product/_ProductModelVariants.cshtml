@@ -1,0 +1,43 @@
+﻿@model ProductDetailsModel.ProductModelVariantModel
+@using Nop.Web.Models.Catalog;
+@using Nop.Core.Domain.Catalog;
+@using Nop.Core.Infrastructure;
+@using System.Text;
+@using System.Globalization;
+@using Nop.Services.Security;
+@if (Model.Values.Count > 0)
+{
+    var modelVariant = Model;
+    string controlId = string.Format("addtoCart_modelVariant_{0}_{1}", modelVariant.ProductId, modelVariant.Values.First().Id);
+    <div class="modelVariants">
+        <dl>
+                <dt>
+                    @if (!string.IsNullOrEmpty(modelVariant.Name))
+                    {
+                        <div class="attribute-description">
+                            @Html.Raw(modelVariant.Name)
+                        </div>
+                    }
+                </dt>
+                <dd>     
+                    <select name="@(controlId)" id="@(controlId)" onchange="changeAttr(this);">
+                        @foreach (var modelValue in modelVariant.Values)
+                        {
+                            <option value="@modelValue.Id">@modelValue.Name</option>
+                        }
+                    </select>    
+                </dd>
+        </dl>
+    </div>
+    
+    
+    <script>
+        function changeAttr(ele) {
+            var val = ele.value;
+            var newModelVariant = "addtoCart_modelVariant_" + "@(modelVariant.ProductId)" + "_" + val;
+            ele.setAttribute('id', newModelVariant);
+            ele.setAttribute('name', newModelVariant);
+            alert(newModelVariant);
+        }
+    </script>
+}

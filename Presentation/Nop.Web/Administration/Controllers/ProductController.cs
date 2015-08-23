@@ -4079,7 +4079,7 @@ namespace Nop.Admin.Controllers
                     };
                     //warnings
                     var warnings = _shoppingCartService.GetShoppingCartItemAttributeWarnings(_workContext.CurrentCustomer,
-                        ShoppingCartType.ShoppingCart, x.Product, 1, x.AttributesXml);
+                        ShoppingCartType.ShoppingCart, x.Product, -1, 1, x.AttributesXml);
                     for (int i = 0; i < warnings.Count; i++)
                     {
                         pacModel.Warnings += warnings[i];
@@ -4326,7 +4326,7 @@ namespace Nop.Admin.Controllers
             #endregion
 
             warnings.AddRange(_shoppingCartService.GetShoppingCartItemAttributeWarnings(_workContext.CurrentCustomer,
-                ShoppingCartType.ShoppingCart, product, 1, attributesXml));
+                ShoppingCartType.ShoppingCart, product,-1, 1, attributesXml));
             if (warnings.Count == 0)
             {
                 //save combination
@@ -4380,7 +4380,7 @@ namespace Nop.Admin.Controllers
                 //new one
                 var warnings = new List<string>();
                 warnings.AddRange(_shoppingCartService.GetShoppingCartItemAttributeWarnings(_workContext.CurrentCustomer,
-                    ShoppingCartType.ShoppingCart, product, 1, attributesXml));
+                    ShoppingCartType.ShoppingCart, product, -1 ,1, attributesXml));
                 if (warnings.Count != 0)
                     continue;
 

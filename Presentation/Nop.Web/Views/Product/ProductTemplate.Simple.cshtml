@@ -88,9 +88,14 @@
                                 @Html.Partial("_DownloadSample", Model)
                                 <!--attributes-->
                                 @{
+                            var dataDictModelVariant = new ViewDataDictionary();
+                            dataDictModelVariant.TemplateInfo.HtmlFieldPrefix = string.Format("modelvariants_{0}", Model.Id);
+                            @Html.Partial("_ProductModelVariants", Model.ProductModelVariant, dataDictModelVariant) 
+                            @*       
                             var dataDictAttributes = new ViewDataDictionary();
                             dataDictAttributes.TemplateInfo.HtmlFieldPrefix = string.Format("attributes_{0}", Model.Id);
                             @Html.Partial("_ProductAttributes", Model.ProductAttributes, dataDictAttributes)
+                            *@
                                 }
                                 <!--gift card-->
                                 @{
